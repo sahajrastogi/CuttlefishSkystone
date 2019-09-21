@@ -5,12 +5,14 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class skyAutoRed extends LinearOpMode {
 
+    skyHMAP robot;
+    skyAuto robotAuto;
     public void runOpMode() throws InterruptedException{
-        skyHMAP robot = new skyHMAP();
+        robot = new skyHMAP();
         robot.init(hardwareMap);
-
+        robotAuto = new skyAuto(robot);
 
         waitForStart();
-        
+
     }
 }

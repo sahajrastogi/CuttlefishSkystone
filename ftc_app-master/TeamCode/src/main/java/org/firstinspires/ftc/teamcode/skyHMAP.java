@@ -33,6 +33,11 @@ public class skyHMAP {
     public DcMotorEx bl;
     public DcMotorEx br;
 
+    public DcMotorEx iL;
+    public DcMotorEx iR;
+
+    public DcMotorEx lift;
+
     public Servo autoBigFlip;
     public Servo autoSmallFlip;
 
@@ -42,10 +47,10 @@ public class skyHMAP {
         hwMap = ahwMap;
 
         /*Motors*/
-        fl = (DcMotorEx)hwMap.get(DcMotor.class, "fl");
-        fr = (DcMotorEx)hwMap.get(DcMotor.class, "fr");
-        bl = (DcMotorEx)hwMap.get(DcMotor.class, "bl");
-        br = (DcMotorEx)hwMap.get(DcMotor.class, "br");
+        fl = hwMap.get(DcMotorEx.class, "fl");
+        fr = hwMap.get(DcMotorEx.class, "fr");
+        bl = hwMap.get(DcMotorEx.class, "bl");
+        br = hwMap.get(DcMotorEx.class, "br");
 
         fl.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         fr.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
@@ -54,6 +59,10 @@ public class skyHMAP {
 
         br.setDirection(DcMotorEx.Direction.REVERSE);
         fr.setDirection(DcMotorEx.Direction.REVERSE);
+
+        iL = hwMap.get(DcMotorEx.class, "iL");
+        iR = hwMap.get(DcMotorEx.class, "iR");
+        lift = hwMap.get(DcMotorEx.class, "lift");
 
         autoBigFlip = hwMap.get(Servo.class, "abf");
         autoSmallFlip = hwMap.get(Servo.class,"asf");
