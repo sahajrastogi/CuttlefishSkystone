@@ -35,7 +35,7 @@ public class skyAuto extends LinearOpMode {
 
     //distance=rate*duration duration=distance/rate
     //power drives forward, -power drives backward
-    void verticalDrive(double power) {
+    void drive(double power) {
         robot.fl.setPower(power);
         robot.fr.setPower(power);
         robot.bl.setPower(power);
@@ -74,7 +74,7 @@ public class skyAuto extends LinearOpMode {
         robot.fr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
-    void verticalDriveDistance(double power, double distance) throws InterruptedException {
+    void driveDistance(double power, double distance) throws InterruptedException {
         robot.fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -90,7 +90,7 @@ public class skyAuto extends LinearOpMode {
         int frDist = robot.fr.getCurrentPosition();
         int blDist = robot.bl.getCurrentPosition();
         int brDist = robot.br.getCurrentPosition();
-        verticalDrive(power);
+        drive(power);
 
         if(distance > 0) {
             while (robot.fl.getCurrentPosition() - flDist < distance &&
