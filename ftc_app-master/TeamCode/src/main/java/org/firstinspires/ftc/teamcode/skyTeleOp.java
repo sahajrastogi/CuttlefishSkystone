@@ -74,11 +74,11 @@ public class skyTeleOp extends OpMode {
 
         if(g1y.onPress()){
             if(teleClawPos == 0){
-                teleClawPos=270;
+                teleClawPos = 270;
             } else if(teleClawPos == 180){
                 teleClawPos = 270;
             } else if(teleClawPos == 270){
-                teleClawPos =0;
+                teleClawPos = 0;
             }
         }
 
