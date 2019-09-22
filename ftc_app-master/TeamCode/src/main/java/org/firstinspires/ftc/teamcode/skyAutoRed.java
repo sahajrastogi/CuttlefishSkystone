@@ -16,7 +16,32 @@ public class skyAutoRed extends LinearOpMode {
 
         robotAuto.driveDistance(0.5,10);
 
+        robotAuto.gyroTurnRobotRight(90, 0.2);
 
-        //some software
+        //drop arms
+        //strafe in with gyro thingy
+
+        //pick up
+
+        //go forward
+
+        //drop
+
+        //go backward
+
+        //align bitch
+
+        // pick up
+
+        //go forward
+
+        //drop
+
+        //align for foundation
+
+        //do foundation
+
+        //park
+
     }
 }
