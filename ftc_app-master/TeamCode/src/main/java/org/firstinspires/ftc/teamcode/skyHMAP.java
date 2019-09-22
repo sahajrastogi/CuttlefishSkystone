@@ -41,7 +41,7 @@ public class skyHMAP {
     public Servo autoBigFlip;
     public Servo autoSmallFlip;
 
-    HardwareMap hwMap;
+    HardwareMap hwMap; 
 
     public void init(HardwareMap ahwMap) {
         hwMap = ahwMap;
