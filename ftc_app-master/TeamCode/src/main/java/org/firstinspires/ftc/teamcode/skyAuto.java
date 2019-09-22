@@ -92,6 +92,7 @@ public class skyAuto extends LinearOpMode {
         int brDist = robot.br.getCurrentPosition();
         drive(power);
 
+
         if(distance > 0) {
             while (robot.fl.getCurrentPosition() - flDist < distance &&
                     robot.fr.getCurrentPosition() - frDist< distance &&

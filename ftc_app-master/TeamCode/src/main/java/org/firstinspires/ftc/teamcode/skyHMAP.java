@@ -40,8 +40,10 @@ public class skyHMAP {
 
     public Servo autoBigFlip;
     public Servo autoSmallFlip;
+    public Servo teleopRotate;
+    public Servo teleopClaw;
 
-    HardwareMap hwMap; 
+    HardwareMap hwMap;
 
     public void init(HardwareMap ahwMap) {
         hwMap = ahwMap;
@@ -60,13 +62,14 @@ public class skyHMAP {
         br.setDirection(DcMotorEx.Direction.REVERSE);
         fr.setDirection(DcMotorEx.Direction.REVERSE);
 
-        iL = hwMap.get(DcMotorEx.class, "iL");
-        iR = hwMap.get(DcMotorEx.class, "iR");
+        iL = hwMap.get(DcMotorEx.class, "il");
+        iR = hwMap.get(DcMotorEx.class, "ir");
         lift = hwMap.get(DcMotorEx.class, "lift");
 
         autoBigFlip = hwMap.get(Servo.class, "abf");
         autoSmallFlip = hwMap.get(Servo.class,"asf");
-
+        teleopRotate =  hwMap.get(Servo.class,"tr" );
+        teleopClaw = hwMap.get(Servo.class, "tc");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         //parameters.angleUnit = HardwareType.BNO055IMU.AngleUnit.DEGREES;
         //parameters.accelUnit = HardwareType.BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
