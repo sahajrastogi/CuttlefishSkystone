@@ -158,6 +158,8 @@ public class skyTeleOp extends OpMode {
         telemetry.addData("pos", robot.lift.getCurrentPosition());
         telemetry.addData("liftPos",liftPos);
         telemetry.addData("teleopRotatePos",robot.teleopRotate.getCurrentPosition());
+        telemetry.addData("clawClosed",clawClosed);
+        telemetry.addData("teleClawPos",teleClawPos);
         //endregion
     }
 
