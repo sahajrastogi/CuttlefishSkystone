@@ -8,8 +8,8 @@ public class skyAutoRed extends LinearOpMode {
     skyHMAP robot;
     skyAuto robotAuto;
     public void runOpMode() throws InterruptedException{
-        robot.init(hardwareMap);
         robot = new skyHMAP();
+        robot.init(hardwareMap);
         robotAuto = new skyAuto(robot);
 
         waitForStart();
@@ -22,6 +22,7 @@ public class skyAutoRed extends LinearOpMode {
         //strafe in with gyro thingy
 
         //pick up
+        robotAuto.stopDriving();
 
         //go forward
 

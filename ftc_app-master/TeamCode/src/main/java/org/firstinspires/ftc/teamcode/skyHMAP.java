@@ -15,7 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import java.util.Locale;
 
 
-public class skyHMAP {
+public class  skyHMAP {
 
     // The IMU sensor object
     public BNO055IMU imu;
@@ -37,11 +37,12 @@ public class skyHMAP {
     public DcMotorEx iR;
 
     public DcMotorEx lift;
+    public DcMotorEx teleopRotate;
 
     public Servo autoBigFlip;
     public Servo autoSmallFlip;
-    public Servo teleopRotate;
-    public Servo teleopClaw;
+    public Servo teleopClawLeft;
+    public Servo teleopClawRight;
 
     HardwareMap hwMap;
 
@@ -65,11 +66,14 @@ public class skyHMAP {
         iL = hwMap.get(DcMotorEx.class, "il");
         iR = hwMap.get(DcMotorEx.class, "ir");
         lift = hwMap.get(DcMotorEx.class, "lift");
+        teleopRotate = hwMap.get(DcMotorEx.class,"tr");
+
 
         autoBigFlip = hwMap.get(Servo.class, "abf");
         autoSmallFlip = hwMap.get(Servo.class,"asf");
-        teleopRotate =  hwMap.get(Servo.class,"tr" );
-        teleopClaw = hwMap.get(Servo.class, "tc");
+        teleopClawLeft = hwMap.get(Servo.class, "tcl");
+        teleopClawRight = hwMap.get(Servo.class, "tcr");
+
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         //parameters.angleUnit = HardwareType.BNO055IMU.AngleUnit.DEGREES;
         //parameters.accelUnit = HardwareType.BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
