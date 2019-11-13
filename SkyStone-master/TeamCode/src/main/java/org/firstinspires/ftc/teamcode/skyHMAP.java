@@ -43,6 +43,10 @@ public class  skyHMAP {
     public Servo autoSmallFlip;
     public Servo teleopClawLeft;
     public Servo teleopClawRight;
+    public Servo fGrabber;
+    public Servo fGrabber2;
+
+    public Servo capstone;
 
     HardwareMap hwMap;
 
@@ -73,6 +77,9 @@ public class  skyHMAP {
         autoSmallFlip = hwMap.get(Servo.class,"asf");
         teleopClawLeft = hwMap.get(Servo.class, "tcl");
         teleopClawRight = hwMap.get(Servo.class, "tcr");
+        fGrabber = hwMap.get(Servo.class,"fg");
+        fGrabber2 = hwMap.get(Servo.class,"fg2");
+        capstone = hwMap.get(Servo.class,"c");
 
         if(gyro) {
             BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();

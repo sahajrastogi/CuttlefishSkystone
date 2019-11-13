@@ -34,6 +34,7 @@ public class skyTeleOp extends OpMode {
     ButtonOp g2b = new ButtonOp();
     ButtonOp g2dd = new ButtonOp();
     ButtonOp g2du = new ButtonOp();
+    ButtonOp g1x = new ButtonOp();
 
     ElapsedTime timer1 = new ElapsedTime();
     ElapsedTime timer2 = new ElapsedTime();
@@ -45,7 +46,7 @@ public class skyTeleOp extends OpMode {
     boolean t2running = false;
     boolean cancel = false;
 
-
+    boolean smallNinja = false;
     boolean timer1bool = false;
     boolean controlled = false;
     int trPos =0;
@@ -69,15 +70,20 @@ public class skyTeleOp extends OpMode {
         liftPos = 0;
         robot.lift.setTargetPosition(liftPos);
 
-        robot.teleopRotate.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.teleopRotate.setTargetPosition(0);
-        robot.teleopRotate.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.autoBigFlip.setPosition(0.6);
-        robot.autoSmallFlip.setPosition(1);
+        //robot.teleopRotate.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //robot.teleopRotate.setTargetPosition(0);
+        //robot.teleopRotate.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.autoBigFlip.setPosition(0.25);
+        robot.autoSmallFlip.setPosition(0.25);
+        robot.fGrabber.setPosition(1);
+        robot.fGrabber2.setPosition(1);
 
     }
 
     public void loop() {
+        robot.autoBigFlip.setPosition(0.85  );
+
+        g1x.update(gamepad1.x);
         g2a.update(gamepad2.a);
         g2x.update(gamepad2.x); // 180 pos
         g2y.update(gamepad2.y); // 270 pos
@@ -92,12 +98,27 @@ public class skyTeleOp extends OpMode {
         rx*=2;
 
         if(gamepad1.right_trigger > 0.1){
-            ly /= 3;
+            ly/=3;
+            rx/=3;
+            if(smallNinja){
+                ly*=2;
+                rx*=2;
+            }
+        }
+
+        if(gamepad1.left_trigger > 0.1){
+            rx*=2;
             rx/=3;
         }
 
-        if(gamepad2.left_trigger > 0.1){
-            rx/=3;
+        if(g1x.onPress()){
+            smallNinja = !smallNinja;
+        }
+
+        if(smallNinja){
+            ly/=2;
+            rx/=2;
+
         }
 
         mecDrive(ly, lx, rx);
@@ -123,7 +144,7 @@ public class skyTeleOp extends OpMode {
 
 
         //region teleOpClawRotate
-        if(g2a.onPress()) {
+        /*if(g2a.onPress()) {
             if(teleClawPos == 0){
                 teleClawPos = 180;
 
@@ -172,21 +193,21 @@ public class skyTeleOp extends OpMode {
                 robot.teleopRotate.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 robot.teleopRotate.setPower(0.15);
             }
-        }
+        }*/
 
-        if(timer1bool && timer1.seconds() > 2){
+        //if(timer1bool && timer1.seconds() > 2){
             timer1bool = false;
             robot.teleopRotate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.teleopRotate.setPower(0);
-        }
+            //robot.teleopRotate.setPower(0);
+        //}
 
-        if(timer3.seconds() > 0.75 && hi){
+        /*if(timer3.seconds() > 0.75 && hi){
             hi = false;
             clawClosed = true;
-        }
+        }*/
 
         if(robot.teleopRotate.getMode().equals(DcMotor.RunMode.RUN_WITHOUT_ENCODER)){
-            robot.teleopRotate.setPower(gamepad2.right_stick_y*2 /3);
+            robot.teleopRotate.setPower(-gamepad2.right_trigger*1/2 + gamepad2.left_trigger*2/3);
         }
  
         //endregion
@@ -197,11 +218,7 @@ public class skyTeleOp extends OpMode {
 
 
         //region lift
-        if(gamepad2.right_trigger>0.1){
-            liftPow = 0.3;
-        } else {
-            liftPow = 1.0;
-        }
+       liftPow = 1.0;
 
 
         if(g2dd.isPressed()){
@@ -227,12 +244,20 @@ public class skyTeleOp extends OpMode {
 
         //endregion
 
+        if(gamepad1.right_bumper){
+            robot.fGrabber.setPosition(1);
+            robot.fGrabber2.setPosition(1);
+        } else {
+            robot.fGrabber.setPosition(0.25);
+            robot.fGrabber2.setPosition(0.25);
+        }
         //region intake
-        robot.iL.setPower(gamepad2.left_stick_y);
-        robot.iR.setPower(-gamepad2.left_stick_y);
+        robot.iL.setPower(gamepad2.right_stick_y);
+        robot.iR.setPower(-gamepad2.right_stick_y);
         //endregion
 
         //region telemetry
+        telemetry.addData("smallNinja",smallNinja);
         telemetry.addData("pos", robot.lift.getCurrentPosition());
         telemetry.addData("liftPos",liftPos);
         telemetry.addData("teleopRotatePos",robot.teleopRotate.getCurrentPosition());

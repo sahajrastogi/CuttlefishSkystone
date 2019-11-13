@@ -365,6 +365,16 @@ public class skyAuto extends LinearOpMode {
         }
     }
 
+    public void grabbersUp(){
+        robot.fGrabber.setPosition(0.25);
+        robot.fGrabber2.setPosition(0.25);
+    }
+
+    public void grabbersDown(){
+        robot.fGrabber2.setPosition(1);
+        robot.fGrabber.setPosition(1);
+    }
+
 
     //insert methods
 }
