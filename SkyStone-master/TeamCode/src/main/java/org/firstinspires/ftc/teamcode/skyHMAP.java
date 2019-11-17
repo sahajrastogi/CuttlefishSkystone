@@ -6,6 +6,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -45,8 +46,12 @@ public class  skyHMAP {
     public Servo teleopClawRight;
     public Servo fGrabber;
     public Servo fGrabber2;
+    public Servo cap;
 
     public Servo capstone;
+
+    public DistanceSensor distBack;
+    public DistanceSensor distFront;
 
     HardwareMap hwMap;
 
@@ -80,6 +85,9 @@ public class  skyHMAP {
         fGrabber = hwMap.get(Servo.class,"fg");
         fGrabber2 = hwMap.get(Servo.class,"fg2");
         capstone = hwMap.get(Servo.class,"c");
+        cap = hwMap.get(Servo.class,"yc");
+        distBack = hwMap.get(DistanceSensor.class,"db");
+        distFront = hwMap.get(DistanceSensor.class,"df");
 
         if(gyro) {
             BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();

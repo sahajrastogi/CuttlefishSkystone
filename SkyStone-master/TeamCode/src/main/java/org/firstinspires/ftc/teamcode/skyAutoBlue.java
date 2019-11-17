@@ -39,7 +39,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.Arrays;
 
 @Autonomous
-public class skyAutoRed extends LinearOpMode
+public class skyAutoBlue extends LinearOpMode
 {
     OpenCvCamera phoneCam;
     SamplePipeline pipe = new SamplePipeline();
@@ -254,8 +254,8 @@ public class skyAutoRed extends LinearOpMode
         }
         robotAuto.stopDriving();
         sleep(100);
-        if(robotAuto.getHeading() > -87){
-            while(robotAuto.getHeading() >-86) {
+        if(robotAuto.getHeading() > -89){
+            while(robotAuto.getHeading() >-88) {
                 robot.fl.setPower(0.05);
                 robot.fr.setPower(-0.05);
                 robot.bl.setPower(0.05);
@@ -285,19 +285,19 @@ public class skyAutoRed extends LinearOpMode
         robotAuto.stopAndReset();
         robotAuto.runUsing();
 
-        robot.fl.setPower(-0.5);
-        robot.fr.setPower(-0.5);
-        robot.bl.setPower(-0.5);
-        robot.br.setPower(-0.5);
+        robot.fl.setPower(0.5);
+        robot.fr.setPower(0.5);
+        robot.bl.setPower(0.5);
+        robot.br.setPower(0.5);
 
 
         while(true){
-            if(robot.fl.getCurrentPosition() < -1800){
-                robot.fl.setPower(-0.2);
-                robot.fr.setPower(-0.2);
-                robot.bl.setPower(-0.2);
-                robot.br.setPower(-0.2);
-                if(robot.distBack.getDistance(DistanceUnit.CM) <54){
+            if(robot.fl.getCurrentPosition() > 1800){
+                robot.fl.setPower(0.2);
+                robot.fr.setPower(0.2);
+                robot.bl.setPower(0.2);
+                robot.br.setPower(0.2);
+                if(robot.distBack.getDistance(DistanceUnit.CM) <25){
                     break;
                 }
 
@@ -344,14 +344,14 @@ public class skyAutoRed extends LinearOpMode
         robotAuto.stopAndReset();
         robotAuto.runUsing();
 
-        robot.fr.setPower(1);
-        robot.bl.setPower(0.37);
-        robot.br.setPower(-0.37);
-        robot.fl.setPower(-1);
+        robot.fr.setPower(-1);
+        robot.bl.setPower(-0.37);
+        robot.br.setPower(0.37);
+        robot.fl.setPower(1);
         Thread.sleep(50);
 
         robotAuto.grabbersUp();
-        while(robot.fr.getCurrentPosition() < 2500){
+        while(robot.fr.getCurrentPosition() > -2500){
 
         }
         robotAuto.stopDriving();
@@ -359,25 +359,13 @@ public class skyAutoRed extends LinearOpMode
         robotAuto.stopAndReset();
         robotAuto.runUsing();
 
-        if(robotAuto.getHeading() > 0){
-            robot.fl.setPower(-0.1);
-            robot.fr.setPower(0.1);
-            robot.bl.setPower(-0.1);
-            robot.br.setPower(0.1);
+        //change stuff
+        robotAuto.driveDistance(0.2,2);
 
-            while(robotAuto.getHeading() >2){
+        robot.fl.setPower(-0.2);
+        robot.fr.setPower(0.2);
 
-            }
-        } else if(robotAuto.getHeading() < 0){
-            robot.fl.setPower(0.1);
-            robot.fr.setPower(-0.1);
-            robot.bl.setPower(0.1);
-            robot.br.setPower(-0.1);
 
-            while(robotAuto.getHeading() <-175){
-
-            }
-        }
 
         robotAuto.stopDriving();
         Thread.sleep(50);
@@ -385,17 +373,16 @@ public class skyAutoRed extends LinearOpMode
         robot.lift.setPower(1);
         robot.lift.setTargetPosition(4500);
         robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robotAuto.driveDistance(0.2,9);
 
         robotAuto.stopAndReset();
         robotAuto.runUsing();
-        robot.fr.setPower(-1);
-        robot.bl.setPower(-0.37);
-        robot.br.setPower(0.37);
-        robot.fl.setPower(1);
+        robot.fr.setPower(1);
+        robot.bl.setPower(0.37);
+        robot.br.setPower(-0.37);
+        robot.fl.setPower(-1);
 
-        while(robot.fr.getCurrentPosition() > -2000){
-            if(robot.fr.getCurrentPosition() < -750){
+        while(robot.fr.getCurrentPosition() < 2000){
+            if(robot.fr.getCurrentPosition() > 750){
                 robot.teleopRotate.setTargetPosition(-315);
                 robot.teleopRotate.setPower(-0.15);
                 robot.teleopRotate.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -451,7 +438,7 @@ public class skyAutoRed extends LinearOpMode
         public double a3s;
         public double b1s;
         public double b2s;
-        public double b3s;  
+        public double b3s;
         public boolean check = false;
         @Override
         public Mat processFrame(Mat input)

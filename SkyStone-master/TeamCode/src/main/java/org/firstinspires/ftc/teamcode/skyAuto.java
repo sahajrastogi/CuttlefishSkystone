@@ -116,100 +116,94 @@ public class skyAuto extends LinearOpMode {
         robot.bl.setPower(power);
     }
 
-
     public void gyroDrive ( double speed,
                             double distance,
-                            double angle)  throws InterruptedException{
+                            double angle) {
 
-        int     newLeftTarget;
-        int newLeftTargetB;
-        int     newRightTarget;
-        int newRightTargetB;
-        int     moveCounts;
-        double  max;
-        double  error;
-        double  steer;
-        double  leftSpeed;
-        double  rightSpeed;
+        int fltarget;
+        int frtarget;
+        int bltarget;
+        int brtarget;
+        int moveCounts;
+        double max;
+        double error;
+        double steer;
+        double leftSpeed;
+        double rightSpeed;
 
         // Ensure that the opmode is still active
+        if (opModeIsActive()) {
+            robot.fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        robot.bl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.fl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.br.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.fr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            // Determine new target position, and pass to motor controller
+            moveCounts = (int) (distance * robot.ticksPerInch);
+            fltarget = robot.fl.getCurrentPosition() + moveCounts;
+            frtarget = robot.fr.getCurrentPosition() + moveCounts;
+            brtarget = robot.br.getCurrentPosition() + moveCounts;
+            bltarget = robot.bl.getCurrentPosition() + moveCounts;
 
-        // Determine new target position, and pass to motor controller
-        moveCounts = (int)(distance * robot.ticksPerInch);
-        //newLeftTarget = robot.bl.getCurrentPosition() + moveCounts;
-        newLeftTarget = robot.fl.getCurrentPosition() + moveCounts;
-        newRightTarget = robot.fr.getCurrentPosition() + moveCounts;
-        newLeftTargetB = robot.bl.getCurrentPosition() + moveCounts;
-        newRightTargetB = robot.br.getCurrentPosition() + moveCounts;
+            // Set Target and Turn On RUN_TO_POSITION
+            robot.fl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.fr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.bl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.br.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        // Set Target and Turn On RUN_TO_POSITION
-        robot.bl.setTargetPosition(newLeftTarget);
-        robot.fl.setTargetPosition(newLeftTarget);
-        robot.br.setTargetPosition(newRightTarget);
-        robot.fr.setTargetPosition(newRightTarget);
+            robot.fl.setTargetPosition(fltarget);
+            robot.fr.setTargetPosition(frtarget);
+            robot.bl.setTargetPosition(bltarget);
+            robot.br.setTargetPosition(brtarget);
 
-        robot.bl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.fl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.br.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.fr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        // start motion
-        speed = Range.clip(Math.abs(speed), -1, 1.0);
-        robot.bl.setPower(speed);
-        robot.fl.setPower(speed);
-        robot.fr.setPower(speed);
-        robot.br.setPower(speed);
+            // start motion.
+            speed = Range.clip(Math.abs(speed), 0.0, 1.0);
+            robot.fl.setPower(speed);
+            robot.fr.setPower(speed);
+            robot.bl.setPower(speed);
+            robot.br.setPower(speed);
 
-        //
-        telVar = Boolean.toString(robot.fl.isBusy());
-        while (
-                (robot.bl.isBusy() && robot.fr.isBusy() && robot.fl.isBusy() && robot.br.isBusy())) {
-            // adjust relative speed based on heading error.
-            error = getError(angle);
-            steer = getSteer(error, 0.008);
+            // keep looping while we are still active, and BOTH motors are running.
+            while (opModeIsActive() &&
+                    (robot.fl.isBusy() && robot.fr.isBusy() && robot.bl.isBusy() && robot.br.isBusy())) {
 
-            // if driving in reverse, the motor correction also needs to be reversed
-            if (distance < 0)
-                steer *= -1.0;
+                // adjust relative speed based on heading error.
+                error = getError(angle);
+                steer = getSteer(error, 0.05);
 
-            leftSpeed = speed + steer;
-            rightSpeed = speed - steer;
+                // if driving in reverse, the motor correction also needs to be reversed
+                if (distance < 0)
+                    steer *= -1.0;
 
-            // Normalize speeds if either one exceeds +/- 1.0;
-            max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
-            if (max > 1.0)
-            {
-                leftSpeed /= max;
-                rightSpeed /= max;
+                leftSpeed = speed - steer;
+                rightSpeed = speed + steer;
+
+                // Normalize speeds if either one exceeds +/- 1.0;
+                max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
+                if (max > 1.0) {
+                    leftSpeed /= max;
+                    rightSpeed /= max;
+                }
+
+                robot.fl.setPower(leftSpeed);
+                robot.bl.setPower(leftSpeed);
+                robot.fr.setPower(rightSpeed);
+                robot.br.setPower(rightSpeed);
+
+                // Display drive status for the driver.
+                telemetry.addData("Err/St", "%5.1f/%5.1f", error, steer);
+                telemetry.addData("Speed", "%5.2f:%5.2f", leftSpeed, rightSpeed);
+                telemetry.update();
             }
 
-            robot.bl.setPower(leftSpeed);
-            robot.fl.setPower(leftSpeed);
-            robot.br.setPower(rightSpeed);
-            robot.fr.setPower(rightSpeed);
-
-
+            // Stop all motion;
+            stopDriving();
         }
-
-        // Stop all motion;
-        robot.br.setPower(0);
-        robot.fr.setPower(0);
-        robot.fl.setPower(0);
-        robot.bl.setPower(0);
-
-        // Turn off RUN_TO_POSITION
-        robot.fr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.fl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.br.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.bl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public double getError(double targetAngle) {
+
+        public double getError(double targetAngle) {
 
         double robotError;
 
@@ -231,6 +225,7 @@ public class skyAuto extends LinearOpMode {
     String formatDegrees(double degrees){
         return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
     }
+
     public double getHeading() {
         robot.angles = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         return Double.parseDouble(formatAngle(robot.angles.angleUnit, robot.angles.firstAngle));

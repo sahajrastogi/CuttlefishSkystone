@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @TeleOp(name="teleOp")
@@ -25,6 +26,7 @@ public class skyTeleOp extends OpMode {
 
     boolean clawClosed = false;
     int teleClawPos = 0;
+    boolean capstoneUp = true;
 
     int liftPos = 0;
 
@@ -35,10 +37,13 @@ public class skyTeleOp extends OpMode {
     ButtonOp g2dd = new ButtonOp();
     ButtonOp g2du = new ButtonOp();
     ButtonOp g1x = new ButtonOp();
+    ButtonOp g1dd = new ButtonOp();
+    ButtonOp g1du = new ButtonOp();
 
     ElapsedTime timer1 = new ElapsedTime();
     ElapsedTime timer2 = new ElapsedTime();
     ElapsedTime timer3 = new ElapsedTime();
+    ElapsedTime timercap = new ElapsedTime();
     boolean hi = false;
 
     int t2PrevPos = 0;
@@ -49,6 +54,9 @@ public class skyTeleOp extends OpMode {
     boolean smallNinja = false;
     boolean timer1bool = false;
     boolean controlled = false;
+    boolean capUp = true;
+    boolean capTimer = false;
+
     int trPos =0;
 
     int pos0 = 10;
@@ -56,12 +64,14 @@ public class skyTeleOp extends OpMode {
     int pos270 = -650;
 
     double liftPow = 1.0;
+    double capPos = 0;
 
     public void init()
     {
         robot.init(hardwareMap,false);
         timer2.startTime();
         timer3.startTime();
+        timercap.startTime();
     }
 
     public void start(){
@@ -83,6 +93,9 @@ public class skyTeleOp extends OpMode {
     public void loop() {
         robot.autoBigFlip.setPosition(0.85  );
 
+
+        g1dd.update(gamepad1.dpad_down);
+        g1du.update(gamepad1.dpad_up);
         g1x.update(gamepad1.x);
         g2a.update(gamepad2.a);
         g2x.update(gamepad2.x); // 180 pos
@@ -96,6 +109,7 @@ public class skyTeleOp extends OpMode {
         rx = Math.pow(gamepad1.right_stick_x,3);
         rx/=3;
         rx*=2;
+
 
         if(gamepad1.right_trigger > 0.1){
             ly/=3;
@@ -125,86 +139,68 @@ public class skyTeleOp extends OpMode {
 
         //region teleOpClaw
         if (g2y.onPress()){
+
             if(clawClosed) {
                 clawClosed = false;
             }
             else {
                 clawClosed = true;
+                timercap.reset();
+                capTimer = true;
             }
-        }//i'm the best coder on the team
+        }
+
+        if(g2x.onPress()){
+            capUp=!capUp;
+            if(capUp){
+                capPos = 0;
+            } else {
+                capPos = 1;
+            }
+        }
+
+        if(g1du.onPress()){
+            capPos +=0.02;
+        }
+
+        if(g1dd.onPress()){
+            capPos -= 0.02;
+        }
+
+        if(capPos > 1){
+            capPos = 1;
+        }
+        if(capPos < 0){
+            capPos =0;
+        }
+
+        robot.cap.setPosition(capPos);
+
 
         if (clawClosed) {
             robot.teleopClawLeft.setPosition(0.2);
             robot.teleopClawRight.setPosition(1);
+
         } else {
             robot.teleopClawLeft.setPosition(0.35);
             robot.teleopClawRight.setPosition(0.7);
+            robot.capstone.setPosition(0.4);
+        }
+
+        if(capTimer && timercap.seconds()>0.5){
+            if(clawClosed){
+                robot.capstone.setPosition(0);
+            } else {
+                robot.capstone.setPosition(0.4);
+
+            }
+            capTimer = false;
         }
         //endregion
 
+        timer1bool = false;
+        robot.teleopRotate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        //region teleOpClawRotate
-        /*if(g2a.onPress()) {
-            if(teleClawPos == 0){
-                teleClawPos = 180;
-
-                robot.teleopRotate.setTargetPosition(pos180);
-                robot.teleopRotate.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                robot.teleopRotate.setPower(-0.15);
-            } else if(teleClawPos == 180){
-                teleClawPos = 0;
-
-                timer1.reset();
-                timer1bool = true;
-                robot.teleopRotate.setTargetPosition(pos0);
-                robot.teleopRotate.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                robot.teleopRotate.setPower(0.15);
-            } else if(teleClawPos == 270){
-                teleClawPos = 180;
-
-
-                robot.teleopRotate.setTargetPosition(pos180);
-                robot.teleopRotate.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                robot.teleopRotate.setPower(0.15);
-            }
-        }
-
-        if(g2b.onPress()){
-            if(teleClawPos == 0){
-                teleClawPos = 270;
-
-                robot.teleopRotate.setTargetPosition(pos270);
-                robot.teleopRotate.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                robot.teleopRotate.setPower(-0.15);
-            } else if(teleClawPos == 180){
-                teleClawPos = 270;
-
-                robot.teleopRotate.setTargetPosition(pos270);
-                robot.teleopRotate.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                robot.teleopRotate.setPower(-0.15);
-            } else if(teleClawPos == 270){
-                teleClawPos = 0;
-
-                timer1.reset();
-                timer1bool = true;
-                timer3.reset();
-                hi = true;
-                robot.teleopRotate.setTargetPosition(pos0);
-                robot.teleopRotate.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                robot.teleopRotate.setPower(0.15);
-            }
-        }*/
-
-        //if(timer1bool && timer1.seconds() > 2){
-            timer1bool = false;
-            robot.teleopRotate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            //robot.teleopRotate.setPower(0);
-        //}
-
-        /*if(timer3.seconds() > 0.75 && hi){
-            hi = false;
-            clawClosed = true;
-        }*/
 
         if(robot.teleopRotate.getMode().equals(DcMotor.RunMode.RUN_WITHOUT_ENCODER)){
             robot.teleopRotate.setPower(-gamepad2.right_trigger*1/2 + gamepad2.left_trigger*2/3);
@@ -213,13 +209,12 @@ public class skyTeleOp extends OpMode {
         //endregion
 
 
-
-
-
-
         //region lift
-       liftPow = 1.0;
-
+        if(gamepad2.right_bumper) {
+            liftPow = 0.4;
+        } else {
+            liftPow = 1.0;
+        }
 
         if(g2dd.isPressed()){
             robot.lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -268,8 +263,9 @@ public class skyTeleOp extends OpMode {
         telemetry.addData("power", robot.teleopRotate.getPower());
         telemetry.addData("t2running",t2running);
         telemetry.addData("thing","thing");
+        telemetry.addData("dist",robot.distBack.getDistance(DistanceUnit.CM));
 
-                //endregion
+        //endregion
     }
 
     public void mecDrive(double ly, double lx, double rx){
