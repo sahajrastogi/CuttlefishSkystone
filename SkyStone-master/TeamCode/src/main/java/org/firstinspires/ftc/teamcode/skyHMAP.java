@@ -48,19 +48,22 @@ public class  skyHMAP {
         fr = hwMap.get(DcMotorEx.class, "fr");
         bl = hwMap.get(DcMotorEx.class, "bl");
         br = hwMap.get(DcMotorEx.class, "br");
+
+
         iL = hwMap.get(DcMotorEx.class, "iL");
         iR = hwMap.get(DcMotorEx.class, "iR");
-        lift = hwMap.get(DcMotorEx.class, "lift");
-
+        /*lift = hwMap.get(DcMotorEx.class, "lift");
+*/
         fl.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         fr.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         bl.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         br.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        iR.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODERS);
+
+        iL.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODERS);
         iR.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODERS);
 
-        br.setDirection(DcMotorEx.Direction.REVERSE);
-        fr.setDirection(DcMotorEx.Direction.REVERSE);
+        bl.setDirection(DcMotorEx.Direction.REVERSE);
+        fl.setDirection(DcMotorEx.Direction.REVERSE);
 
 
         if(gyro) {

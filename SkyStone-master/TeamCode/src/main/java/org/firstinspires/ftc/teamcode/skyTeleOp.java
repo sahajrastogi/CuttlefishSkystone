@@ -1,14 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.Range;
 
+@TeleOp
 public class skyTeleOp extends OpMode {
 
     public skyHMAP robot = new skyHMAP();
     private double ly,lx, rx;
-    public Gamepad gamepad1;
     private int liftPos;
 
     public void init()
@@ -21,16 +22,9 @@ public class skyTeleOp extends OpMode {
     }
 
     public void loop() {
-        if(gamepad1.left_stick_y>0){
-            robot.iL.setPower(1);
-            robot.iR.setPower(1);
-        }
-        if(gamepad1.left_stick_y<0){
-          robot.iL.setPower(-1);
-          robot.iR.setPower(-1);
-        }
-
-
+        robot.iL.setPower(gamepad2.left_stick_y);
+        robot.iR.setPower(-gamepad2.left_stick_y);
+        /*
          if(gamepad1.dpad_up){
              robot.lift.setPower(1);
          }
@@ -41,11 +35,11 @@ public class skyTeleOp extends OpMode {
               robot.lift.getCurrentPosition();
 
              robot.lift.setTargetPosition(liftPos);
-         }
+         }*/
 
-        ly = -Math.pow(gamepad1.left_stick_y,3);
+        ly = -gamepad1.left_stick_y;
         lx = gamepad1.left_stick_x;
-        rx = Math.pow(gamepad1.right_stick_x,3);
+        rx = gamepad1.right_stick_x;
         rx/=3;
         rx*=2;
 
