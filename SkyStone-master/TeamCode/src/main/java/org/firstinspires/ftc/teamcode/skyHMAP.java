@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -14,7 +12,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 import java.util.Locale;
-
 
 public class  skyHMAP {
 
@@ -38,6 +35,11 @@ public class  skyHMAP {
     public DcMotorEx iR;
     public DcMotorEx lift;
 
+    /*Servos*/
+    public Servo aR;
+    public Servo aL;
+    public Servo sC;
+
     HardwareMap hwMap;
 
     public void init(HardwareMap ahwMap, boolean gyro) {
@@ -52,8 +54,8 @@ public class  skyHMAP {
 
         iL = hwMap.get(DcMotorEx.class, "iL");
         iR = hwMap.get(DcMotorEx.class, "iR");
-        /*lift = hwMap.get(DcMotorEx.class, "lift");
-*/
+        lift = hwMap.get(DcMotorEx.class,"lift");
+
         fl.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         fr.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         bl.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
@@ -61,9 +63,14 @@ public class  skyHMAP {
 
         iL.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODERS);
         iR.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODERS);
+        lift.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODERS);
 
         bl.setDirection(DcMotorEx.Direction.REVERSE);
         fl.setDirection(DcMotorEx.Direction.REVERSE);
+
+        aR = hwMap.servo.get("axelRight");
+        aL = hwMap.servo.get("axelLeft");
+        sC = hwMap.servo.get("servoClaw");
 
 
         if(gyro) {

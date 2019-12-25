@@ -102,9 +102,6 @@ public class skyAuto extends LinearOpMode {
         stopDriving();
     }
 
-
-
-
         public double getError(double targetAngle) {
 
         double robotError;
