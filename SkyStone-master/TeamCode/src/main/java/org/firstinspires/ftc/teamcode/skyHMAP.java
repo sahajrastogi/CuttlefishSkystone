@@ -4,6 +4,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -35,6 +36,10 @@ public class  skyHMAP {
     public DcMotorEx iR;
     public DcMotorEx lift;
 
+
+    public DcMotor vl;
+    public DcMotor vr;
+    public DcMotor h;
     /*Servos*/
     public Servo aR;
     public Servo aL;
@@ -52,31 +57,59 @@ public class  skyHMAP {
         br = hwMap.get(DcMotorEx.class, "br");
 
 
-        iL = hwMap.get(DcMotorEx.class, "iL");
+        /*iL = hwMap.get(DcMotorEx.class, "iL");
         iR = hwMap.get(DcMotorEx.class, "iR");
-        lift = hwMap.get(DcMotorEx.class,"lift");
+        lift = hwMap.get(DcMotorEx.class,"lift");*/
 
-        fl.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        fr.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        bl.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        br.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        fl.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        fr.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        bl.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        br.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
-        iL.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODERS);
-        iR.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODERS);
-        lift.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODERS);
+        fl.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        fr.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        bl.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        br.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
         bl.setDirection(DcMotorEx.Direction.REVERSE);
         fl.setDirection(DcMotorEx.Direction.REVERSE);
 
+
+        vl = hwMap.get(DcMotor.class, "fl");
+        vr = hwMap.get(DcMotor.class, "fr");
+        h = hwMap.get(DcMotor.class, "bl");
+
+
+        vl.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        vr.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        h.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+        vl.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        vr.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        h.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+
+        //defaults:
+        //forward is toward intake wheels
+        //forward is positive ticks for both vertical encoders
+        //right is positive ticks for horizontal encoder
+
+
+
+        /*iL.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        iR.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        lift.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+
+
+
         aR = hwMap.servo.get("axelRight");
         aL = hwMap.servo.get("axelLeft");
-        sC = hwMap.servo.get("servoClaw");
+        sC = hwMap.servo.get("servoClaw");*/
 
 
         if(gyro) {
             BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-            //parameters.angleUnit = HardwareType.BNO055IMU.AngleUnit.DEGREES;
-            //parameters.accelUnit = HardwareType.BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+            parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+            parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
             parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
             parameters.loggingEnabled = true;
             parameters.loggingTag = "IMU";
