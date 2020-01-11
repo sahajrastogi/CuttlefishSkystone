@@ -23,7 +23,6 @@ public class skyTeleOp extends OpMode {
     ButtonOp g2y = new ButtonOp();
     ButtonOp g2a = new ButtonOp();
 
-    int change  = 1;
     public void init() {
         robot.init(hardwareMap, false);
     }
@@ -33,22 +32,19 @@ public class skyTeleOp extends OpMode {
     }
 
     public void loop() {
-        updateButtons();
-        setIntakePower();
-        moveClaw();
-        checkLift();
-        driveTrain();
+        //region update buttons
+        dpUp.update(gamepad1.dpad_up);
+        dpDown.update(gamepad1.dpad_down);
+        g2x.update(gamepad2.x);
+        g2y.update(gamepad2.y);
+        //endregion
 
-    }
+        //region intake
+        robot.iL.setPower(-gamepad2.left_stick_y);
+        robot.iR.setPower(gamepad2.left_stick_y);
+        //endregion
 
-    public void mecDrive(double ly, double lx, double rx) {
-        robot.fl.setPower(Range.clip(ly + 1 * lx + rx, -1, 1));
-        robot.bl.setPower(Range.clip(ly - 1 * lx + rx, -1, 1));
-        robot.fr.setPower(Range.clip(ly - 1 * lx - rx, -1, 1));
-        robot.br.setPower(Range.clip(ly + 1 * lx - rx, -1, 1));
-    }
-
-    public void checkLift() {
+        //region check lift
         if (robot.lift.getCurrentPosition() < liftPos) {
             robot.lift.setPower(1);
         }
@@ -66,39 +62,18 @@ public class skyTeleOp extends OpMode {
             robot.lift.setTargetPosition(liftPos);
             robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
-    }
 
-    public void updateButtons() {
-        dpUp.update(gamepad1.dpad_up);
-        dpDown.update(gamepad1.dpad_down);
-        g2x.update(gamepad2.x);
-        g2y.update(gamepad2.y);
-
-    }
-
-    public void setIntakePower(){
-        robot.iL.setPower(-gamepad2.left_stick_y);
-        robot.iR.setPower(gamepad2.left_stick_y);
-    }
-
-    public void driveTrain(){
-        ly = -gamepad1.left_stick_y;
-        lx = gamepad1.left_stick_x;
-        rx = gamepad1.right_stick_x;
-        rx /= 3;
-        rx *= 2;
-
-        if(gamepad1.right_trigger > 0.1) {
-            ly /= 3;
-            rx /= 3;
-
+        if(dpUp.isPressed()){
+            robot.lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.lift.setPower(1);
+        } else if(dpDown.isPressed()){
+            robot.lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.lift.setPower(-1);
         }
-        mecDrive(ly, lx, rx);
-    }
+        //endregion
 
-    public void moveClaw(){
-
-        //X is pressed
+        //region MoveClaw
+        //X is Pressed
         if(g2x.onPress()) {
             if (clawPos == 180) {
                 robot.aR.setPosition(0);
@@ -144,7 +119,30 @@ public class skyTeleOp extends OpMode {
         else if(g2a.onPress()&&robot.sC.getPosition()==0){
             robot.sC.setPosition(1);
         }
+        //endregion
 
+        //region drivetrain
+        ly = -gamepad1.left_stick_y;
+        lx = gamepad1.left_stick_x;
+        rx = gamepad1.right_stick_x;
+        rx /= 3;
+        rx *= 2;
+
+        if(gamepad1.right_trigger > 0.1) {
+            ly /= 3;
+            rx /= 3;
+        }
+        mecDrive(ly, lx, rx);
+    //endregion
     }
+
+    public void mecDrive(double ly, double lx, double rx) {
+        robot.fl.setPower(Range.clip(ly + 1 * lx + rx, -1, 1));
+        robot.bl.setPower(Range.clip(ly - 1 * lx + rx, -1, 1));
+        robot.fr.setPower(Range.clip(ly - 1 * lx - rx, -1, 1));
+        robot.br.setPower(Range.clip(ly + 1 * lx - rx, -1, 1));
+    }
+
+    
 
 }

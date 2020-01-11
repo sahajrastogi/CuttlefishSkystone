@@ -130,6 +130,9 @@ public class skyAuto extends LinearOpMode {
         return Double.parseDouble(formatAngle(robot.angles.angleUnit, robot.angles.firstAngle));
     }
 
+    public double getZAngle(){
+        return (robot.imu.getAngularOrientation().firstAngle);
+    }
 
     public double normalize(double hi){
         if(hi < 0){
