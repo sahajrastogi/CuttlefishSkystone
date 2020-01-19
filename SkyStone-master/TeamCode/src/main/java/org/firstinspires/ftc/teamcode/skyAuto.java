@@ -146,7 +146,7 @@ public class skyAuto extends LinearOpMode {
 
     //insert methods
     public static void goToPosition(double x, double y, double movementSpeed){
-        
+
 
     }
 }
