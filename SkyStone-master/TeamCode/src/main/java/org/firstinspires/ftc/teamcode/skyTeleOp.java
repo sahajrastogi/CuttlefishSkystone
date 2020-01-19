@@ -11,11 +11,12 @@ import com.qualcomm.robotcore.util.Range;
 public class skyTeleOp extends OpMode {
 
     public skyHMAP robot = new skyHMAP();
-    private double ly, lx, rx;
-    private int liftPos;
+    public double ly, lx, rx;
+    public int liftPos;
     public int clawPos = 0;
-    private boolean xPressed;
-    private boolean yPressed;
+    public boolean fgrabbersUp = true;
+    public boolean loopOver = true;
+    public boolean grabbed = false;
 
     ButtonOp dpUp = new ButtonOp();
     ButtonOp dpDown = new ButtonOp();
@@ -32,27 +33,30 @@ public class skyTeleOp extends OpMode {
     }
 
     public void loop() {
+
         //region update buttons
-        dpUp.update(gamepad1.dpad_up);
-        dpDown.update(gamepad1.dpad_down);
+        dpUp.update(gamepad2.dpad_up);
+        dpDown.update(gamepad2.dpad_down);
         g2x.update(gamepad2.x);
         g2y.update(gamepad2.y);
+        g2a.update(gamepad2.a);
         //endregion
 
         //region intake
-        robot.iL.setPower(-gamepad2.left_stick_y);
-        robot.iR.setPower(gamepad2.left_stick_y);
+        robot.iL.setPower(0.75*gamepad2.right_stick_y);
+        robot.iR.setPower(0.75*gamepad2.right_stick_y);
         //endregion
 
         //region check lift
-        if (robot.lift.getCurrentPosition() < liftPos) {
-            robot.lift.setPower(1);
-        }
+        if(robot.lift.getMode().equals(DcMotor.RunMode.RUN_TO_POSITION)) {
+            if (robot.lift.getCurrentPosition() < liftPos) {
+                robot.lift.setPower(1);
+            }
 
-        if (robot.lift.getCurrentPosition() > liftPos) {
-            robot.lift.setPower(-1);
+            if (robot.lift.getCurrentPosition() > liftPos) {
+                robot.lift.setPower(-1);
+            }
         }
-
         if (dpUp.onRelease()) {
             liftPos = robot.lift.getCurrentPosition();
             robot.lift.setTargetPosition(liftPos);
@@ -65,59 +69,76 @@ public class skyTeleOp extends OpMode {
 
         if(dpUp.isPressed()){
             robot.lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.lift.setPower(1);
+
+        if(gamepad2.right_trigger > 0.1){
+            robot.lift.setPower(-0.1);
+        } else {
+            robot.lift.setPower(-1);
+        }
         } else if(dpDown.isPressed()){
             robot.lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.lift.setPower(-1);
+            if(gamepad2.right_trigger > 0.1){
+                robot.lift.setPower(0.1);
+            } else {
+                robot.lift.setPower(1);
+            }
         }
         //endregion
 
-        //region MoveClaw
+        //region claw
         //X is Pressed
         if(g2x.onPress()) {
-            if (clawPos == 180) {
-                robot.aR.setPosition(0);
-                robot.aL.setPosition(0);
+            //grab
+            if (clawPos == 0 && loopOver) {
+                robot.aL.setPosition(0.8);
+                robot.aR.setPosition(0.15);
+                clawPos = 1;
+                loopOver = false;
+            }
+            //deposit
+            if(clawPos == 1 && loopOver) {
+                robot.aL.setPosition(0.1);
+                robot.aR.setPosition(0.9);
+                clawPos = 2;
+                loopOver = false;
+            }
+
+            //intake
+            if(clawPos == 2 && loopOver) {
+
+
+                robot.aL.setPosition(0.65);
+                robot.aR.setPosition(0.3);
                 clawPos = 0;
+                loopOver = false;
 
-            }
-            if(clawPos == 270) {
-                robot.aR.setPosition(0.5);
-                robot.aL.setPosition(0.5);
-                clawPos = 180;
-
-            }
-            if(clawPos == 0) {
-                robot.aR.setPosition(0.5);
-                robot.aL.setPosition(0.5);
-                clawPos = 180;
             }
         }
-        //Y is Pressed
+
+        loopOver = true;
+
         if(g2y.onPress()){
-            if(clawPos==180){
-                robot.aR.setPosition(0.66);
-                robot.aL.setPosition(0.66);
-                clawPos =270;
-            }
-            if(clawPos ==270){
-                robot.aR.setPosition(0);
-                robot.aL.setPosition(0);
-                clawPos = 0;
-            }
-            if(clawPos ==0){
-                robot.aR.setPosition(0.66);
-                robot.aL.setPosition(0.66);
-                clawPos = 270;
-            }
-
+            grabbed = !grabbed;
         }
 
-        if(g2a.onPress()&&robot.sC.getPosition()==1){
-            robot.sC.setPosition(0);
+        if(grabbed){
+            robot.gs.setPosition(1);
+        } else {
+            robot.gs.setPosition(0);
         }
-        else if(g2a.onPress()&&robot.sC.getPosition()==0){
-            robot.sC.setPosition(1);
+
+        //endregion
+        //region foundation grabbers
+        if(g2a.onPress()){
+            fgrabbersUp = !fgrabbersUp;
+        }
+
+        if(fgrabbersUp){
+            robot.fgl.setPosition(0.6);
+            robot.fgr.setPosition(0.4);
+        } else{
+            robot.fgl.setPosition(0.3);
+            robot.fgr.setPosition(0.7);
         }
         //endregion
 
@@ -125,24 +146,37 @@ public class skyTeleOp extends OpMode {
         ly = -gamepad1.left_stick_y;
         lx = gamepad1.left_stick_x;
         rx = gamepad1.right_stick_x;
-        rx /= 3;
-        rx *= 2;
+
+        rx = Math.pow(rx,3);
+        rx*=4;
+        rx*=5;
+
 
         if(gamepad1.right_trigger > 0.1) {
             ly /= 3;
             rx /= 3;
+            lx /= 3;
         }
         mecDrive(ly, lx, rx);
     //endregion
+
+        //region telemetry
+        telemetry.addData("clawPos",clawPos);
+        telemetry.addData("lpos",robot.aL.getPosition());
+        telemetry.addData("rpos",robot.aR.getPosition());
+        telemetry.addData("pos",robot.fl.getCurrentPosition());
+        //endregion
+
     }
 
     public void mecDrive(double ly, double lx, double rx) {
-        robot.fl.setPower(Range.clip(ly + 1 * lx + rx, -1, 1));
-        robot.bl.setPower(Range.clip(ly - 1 * lx + rx, -1, 1));
-        robot.fr.setPower(Range.clip(ly - 1 * lx - rx, -1, 1));
-        robot.br.setPower(Range.clip(ly + 1 * lx - rx, -1, 1));
+        robot.fl.setPower(Range.clip(ly + lx + rx, -1, 1));
+        robot.bl.setPower(Range.clip(ly - lx + rx, -1, 1));
+        robot.fr.setPower(Range.clip(ly - lx - rx, -1, 1));
+        robot.br.setPower(Range.clip(ly + lx - rx, -1, 1));
+
     }
 
-    
+
 
 }

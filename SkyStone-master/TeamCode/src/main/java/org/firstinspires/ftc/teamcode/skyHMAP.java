@@ -41,9 +41,16 @@ public class  skyHMAP {
     public DcMotor vr;
     public DcMotor h;
     /*Servos*/
+
     public Servo aR;
     public Servo aL;
-    public Servo sC;
+
+    public Servo fgl;
+    public Servo fgr;
+
+    public Servo gs;
+
+
 
     HardwareMap hwMap;
 
@@ -57,9 +64,9 @@ public class  skyHMAP {
         br = hwMap.get(DcMotorEx.class, "br");
 
 
-        /*iL = hwMap.get(DcMotorEx.class, "iL");
+        iL = hwMap.get(DcMotorEx.class, "iL");
         iR = hwMap.get(DcMotorEx.class, "iR");
-        lift = hwMap.get(DcMotorEx.class,"lift");*/
+        lift = hwMap.get(DcMotorEx.class,"lift");
 
         fl.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         fr.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -73,11 +80,13 @@ public class  skyHMAP {
 
         bl.setDirection(DcMotorEx.Direction.REVERSE);
         fl.setDirection(DcMotorEx.Direction.REVERSE);
+        br.setDirection(DcMotorEx.Direction.FORWARD);
+        fr.setDirection(DcMotorEx.Direction.FORWARD);
 
 
-        vl = hwMap.get(DcMotor.class, "fl");
-        vr = hwMap.get(DcMotor.class, "fr");
-        h = hwMap.get(DcMotor.class, "bl");
+        vl = hwMap.get(DcMotor.class, "iL");
+        vr = hwMap.get(DcMotor.class, "bl");
+        h = hwMap.get(DcMotor.class, "odo");
 
 
         vl.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -93,18 +102,21 @@ public class  skyHMAP {
         //forward is positive ticks for both vertical encoders
         //right is positive ticks for horizontal encoder
 
+        iL.setDirection(DcMotorEx.Direction.REVERSE);
 
-
-        /*iL.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        iL.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         iR.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         lift.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
 
 
-        aR = hwMap.servo.get("axelRight");
-        aL = hwMap.servo.get("axelLeft");
-        sC = hwMap.servo.get("servoClaw");*/
+        aR = hwMap.servo.get("ar");
+        aL = hwMap.servo.get("al");
+        /*sC = hwMap.servo.get("servoClaw");*/
+        fgr = hwMap.servo.get("fgr");
+        fgl = hwMap.servo.get("fgl");
 
+        gs = hwMap.servo.get("gs");
 
         if(gyro) {
             BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
