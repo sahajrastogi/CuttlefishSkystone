@@ -43,8 +43,8 @@ public class skyTeleOp extends OpMode {
         //endregion
 
         //region intake
-        robot.iL.setPower(0.75*gamepad2.right_stick_y);
-        robot.iR.setPower(0.75*gamepad2.right_stick_y);
+        robot.iL.setPower(gamepad2.right_stick_y);
+        robot.iR.setPower(gamepad2.right_stick_y);
         //endregion
 
         //region check lift
@@ -107,8 +107,8 @@ public class skyTeleOp extends OpMode {
             if(clawPos == 2 && loopOver) {
 
 
-                robot.aL.setPosition(0.65);
-                robot.aR.setPosition(0.3);
+                robot.aL.setPosition(0.7);
+                robot.aR.setPosition(0.25);
                 clawPos = 0;
                 loopOver = false;
 
@@ -122,20 +122,22 @@ public class skyTeleOp extends OpMode {
         }
 
         if(grabbed){
-            robot.gs.setPosition(1);
+            robot.gf.setPosition(0.7);
+            robot.gs.setPosition(0.62);
         } else {
-            robot.gs.setPosition(0);
+            robot.gf.setPosition(0.2);
+            robot.gs.setPosition(0.92);
         }
 
-        //endregion
-        //region foundation grabbers
-        if(g2a.onPress()){
-            fgrabbersUp = !fgrabbersUp;
-        }
+            //endregion
+            //region foundation grabbers
+            if(g2a.onPress()){
+                fgrabbersUp = !fgrabbersUp;
+            }
 
-        if(fgrabbersUp){
-            robot.fgl.setPosition(0.6);
-            robot.fgr.setPosition(0.4);
+            if(fgrabbersUp){
+                robot.fgl.setPosition(0.6);
+                robot.fgr.setPosition(0.4);
         } else{
             robot.fgl.setPosition(0.3);
             robot.fgr.setPosition(0.7);
@@ -146,16 +148,15 @@ public class skyTeleOp extends OpMode {
         ly = -gamepad1.left_stick_y;
         lx = gamepad1.left_stick_x;
         rx = gamepad1.right_stick_x;
+        rx*=3;
+        rx/=4;
 
-        rx = Math.pow(rx,3);
-        rx*=4;
-        rx*=5;
 
 
         if(gamepad1.right_trigger > 0.1) {
-            ly /= 3;
+            ly /= 2.5;
             rx /= 3;
-            lx /= 3;
+            lx /= 2;
         }
         mecDrive(ly, lx, rx);
     //endregion
@@ -164,7 +165,12 @@ public class skyTeleOp extends OpMode {
         telemetry.addData("clawPos",clawPos);
         telemetry.addData("lpos",robot.aL.getPosition());
         telemetry.addData("rpos",robot.aR.getPosition());
-        telemetry.addData("pos",robot.fl.getCurrentPosition());
+        telemetry.addData("pos",robot.lift.getCurrentPosition());
+        telemetry.addData("mode",robot.lift.getMode());
+        telemetry.addData("vl",robot.vl.getCurrentPosition());
+        telemetry.addData("vr",robot.vr.getCurrentPosition());
+        telemetry.addData("h",robot.h.getCurrentPosition());
+        telemetry.addData("grabbed",grabbed);
         //endregion
 
     }

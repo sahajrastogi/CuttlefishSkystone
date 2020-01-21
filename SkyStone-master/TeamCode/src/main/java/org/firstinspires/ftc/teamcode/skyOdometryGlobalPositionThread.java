@@ -15,20 +15,24 @@ public class skyOdometryGlobalPositionThread implements Runnable{
     skyHMAP robot = new skyHMAP();
     private boolean isRunning = true;
 
-    final double COUNTS_PER_INCH = 108.68;
+    final double COUNTS_PER_INCH = 848.8265;
 
     //Position variables used for storage and calculations
-    double vrpos = 0, vlpos = 0, hpos = 0,  deltatheta = 0;
-    private double globalx = 0, globaly = 0, orientation = 0;//in radians
-    private double prevVrpos = 0, prevVlpos = 0, prevHpos = 0;
+    public double count;
+    public double vrpos = 0, vlpos = 0, hpos = 0,  deltatheta = 0;
+    public double globalx = 0, globaly = 0, orientation = 0;//in radians
+    public double prevVrpos = 0, prevVlpos = 0, prevHpos = 0;
 
     //Algorithm constants
     private double robotEncoderWheelDistance;
     private double horizontalEncoderTickPerDegreeOffset;
+    private double rotationRatio;
 
     private int sleepTime;
 
     //Files to access the algorithm constants
+    private File rotationRatioFile = AppUtil.getInstance().getSettingsFile("rotationRatio.txt");
+
     private File wheelBaseSeparationFile = AppUtil.getInstance().getSettingsFile("wheelBaseSeparation.txt");
     private File horizontalTickOffsetFile = AppUtil.getInstance().getSettingsFile("horizontalTickOffset.txt");
 
@@ -39,6 +43,7 @@ public class skyOdometryGlobalPositionThread implements Runnable{
         globaly = initialY;
         orientation = initialOrientation;
 
+        rotationRatio = Double.parseDouble(ReadWriteFile.readFile(rotationRatioFile).trim());
         robotEncoderWheelDistance = Double.parseDouble(ReadWriteFile.readFile(wheelBaseSeparationFile).trim()) * COUNTS_PER_INCH;
         this.horizontalEncoderTickPerDegreeOffset = Double.parseDouble(ReadWriteFile.readFile(horizontalTickOffsetFile).trim());
 
@@ -57,13 +62,13 @@ public class skyOdometryGlobalPositionThread implements Runnable{
         double realchangehpos = changehpos + deltatheta*horizontalEncoderTickPerDegreeOffset;
 
         double center = (changevl + changevr)/2;
-        globalx += center*Math.cos(orientation) + realchangehpos*Math.sin(orientation + deltatheta);
-        globaly += center*Math.sin(orientation) - realchangehpos*Math.cos(orientation + deltatheta);
+        globalx += center*Math.cos(orientation) + realchangehpos*Math.sin(orientation + deltatheta/2);
+        globaly += center*Math.sin(orientation) - realchangehpos*Math.cos(orientation + deltatheta/2);
         orientation += deltatheta;
         prevVrpos = vrpos;
         prevVlpos = vlpos;
         prevHpos = hpos;
-
+        count++;
     }
 
 
@@ -83,11 +88,6 @@ public class skyOdometryGlobalPositionThread implements Runnable{
     public void run() {
         while(isRunning) {
             globalCoordinatePositionUpdate();
-            try {
-                Thread.sleep(sleepTime);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
     }
 }

@@ -22,7 +22,7 @@ public class skyOdometryCalibration extends LinearOpMode {
 
 
     final double PIVOT_SPEED = 0.5;
-    final double COUNTS_PER_INCH = 108.68;
+    final double COUNTS_PER_INCH = 848.8265;
 
     ElapsedTime timer = new ElapsedTime();
 
@@ -30,6 +30,7 @@ public class skyOdometryCalibration extends LinearOpMode {
 
     File wheelBaseSeparationFile = AppUtil.getInstance().getSettingsFile("wheelBaseSeparation.txt");
     File horizontalTickOffsetFile = AppUtil.getInstance().getSettingsFile("horizontalTickOffset.txt");
+    File rotationRatioFile = AppUtil.getInstance().getSettingsFile("rotationRatio.txt");
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -58,7 +59,7 @@ public class skyOdometryCalibration extends LinearOpMode {
         //Stop the robot
         robotAuto.stopDriving();
         timer.reset();
-        while(timer.milliseconds() < 1500 && opModeIsActive()){
+        while(timer.milliseconds() < 2500 && opModeIsActive()){
             telemetry.addData("IMU Angle", robotAuto.getZAngle());
             telemetry.update();
         }
@@ -68,6 +69,7 @@ public class skyOdometryCalibration extends LinearOpMode {
 
 
      //do calcs
+        double rotationRatio = Math.abs((double)robot.vl.getCurrentPosition()/(double)robot.vr.getCurrentPosition());
         double encoderDifference = Math.abs(robot.vl.getCurrentPosition()) + (Math.abs(robot.vr.getCurrentPosition()));
 
         double verticalEncoderTickOffsetPerDegree = Math.abs(encoderDifference/angle);
@@ -75,8 +77,9 @@ public class skyOdometryCalibration extends LinearOpMode {
         double wheelBaseSeparation = (2*90*verticalEncoderTickOffsetPerDegree)/(Math.PI*COUNTS_PER_INCH);
 
         horizontalTickOffset = robot.h.getCurrentPosition()/(Math.toRadians(robotAuto.getZAngle()));
-
+        horizontalTickOffset = Math.abs(horizontalTickOffset);
         //Write the constants to text files
+        ReadWriteFile.writeFile(rotationRatioFile,String.valueOf(rotationRatio));
         ReadWriteFile.writeFile(wheelBaseSeparationFile, String.valueOf(wheelBaseSeparation));
         ReadWriteFile.writeFile(horizontalTickOffsetFile, String.valueOf(horizontalTickOffset));
 
@@ -87,6 +90,7 @@ public class skyOdometryCalibration extends LinearOpMode {
             telemetry.addData("verticalEncoderTickOffsetPerDegree",verticalEncoderTickOffsetPerDegree);
             telemetry.addData("Wheel Base Separation", wheelBaseSeparation);
             telemetry.addData("Horizontal Encoder Offset", horizontalTickOffset);
+            telemetry.addData("rotationRatio",rotationRatio);
 
 
             //Display raw values

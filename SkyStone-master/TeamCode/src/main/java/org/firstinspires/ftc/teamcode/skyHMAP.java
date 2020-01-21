@@ -49,6 +49,7 @@ public class  skyHMAP {
     public Servo fgr;
 
     public Servo gs;
+    public Servo gf;
 
 
 
@@ -85,7 +86,7 @@ public class  skyHMAP {
 
 
         vl = hwMap.get(DcMotor.class, "iL");
-        vr = hwMap.get(DcMotor.class, "bl");
+        vr = hwMap.get(DcMotor.class, "br");
         h = hwMap.get(DcMotor.class, "odo");
 
 
@@ -103,6 +104,7 @@ public class  skyHMAP {
         //right is positive ticks for horizontal encoder
 
         iL.setDirection(DcMotorEx.Direction.REVERSE);
+        h.setDirection(DcMotorEx.Direction.REVERSE);
 
         iL.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         iR.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
@@ -117,6 +119,7 @@ public class  skyHMAP {
         fgl = hwMap.servo.get("fgl");
 
         gs = hwMap.servo.get("gs");
+        gf = hwMap.servo.get("gf");
 
         if(gyro) {
             BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
