@@ -18,6 +18,7 @@ public class skyAuto extends LinearOpMode {
 
     skyHMAP robot;
     public String telVar;
+
     public skyAuto(skyHMAP hwmap){
 
         robot = hwmap;
@@ -143,8 +144,9 @@ public class skyAuto extends LinearOpMode {
         return hi;
     }
 
-
-
-
     //insert methods
+    public static void goToPosition(double x, double y, double movementSpeed){
+
+
+    }
 }
