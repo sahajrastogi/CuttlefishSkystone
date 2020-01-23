@@ -13,6 +13,7 @@ public class skyTeleOp extends OpMode {
     public skyHMAP robot = new skyHMAP();
     public double ly, lx, rx;
     public int liftPos;
+    public int lift2Pos;
     public int clawPos = 0;
     public boolean fgrabbersUp = true;
     public boolean loopOver = true;
@@ -57,11 +58,33 @@ public class skyTeleOp extends OpMode {
                 robot.lift.setPower(-1);
             }
         }
+
+        if(robot.lift2.getMode().equals(DcMotor.RunMode.RUN_TO_POSITION)){
+            if(robot.lift2.getCurrentPosition() < lift2Pos){
+                robot.lift2.setPower(1);
+            }
+
+            if(robot.lift2.getCurrentPosition() > lift2Pos){
+                robot.lift2.setPower(-1);
+            }
+        }
+
+
+
         if (dpUp.onRelease()) {
+            lift2Pos = robot.lift2.getCurrentPosition();
+            robot.lift2.setTargetPosition(lift2Pos);
+            robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
             liftPos = robot.lift.getCurrentPosition();
+
             robot.lift.setTargetPosition(liftPos);
             robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         } else if (dpDown.onRelease()) {
+            lift2Pos = robot.lift2.getCurrentPosition();
+            robot.lift2.setTargetPosition(lift2Pos);
+            robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
             liftPos = robot.lift.getCurrentPosition();
             robot.lift.setTargetPosition(liftPos);
             robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -69,18 +92,26 @@ public class skyTeleOp extends OpMode {
 
         if(dpUp.isPressed()){
             robot.lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.lift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        if(gamepad2.right_trigger > 0.1){
-            robot.lift.setPower(-0.1);
-        } else {
-            robot.lift.setPower(-1);
-        }
+            if(gamepad2.right_trigger > 0.1){
+                robot.lift.setPower(-0.1);
+                robot.lift2.setPower(-0.1);
+            } else {
+                robot.lift.setPower(-1);
+                robot.lift2.setPower(-1);
+            }
+
         } else if(dpDown.isPressed()){
             robot.lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.lift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
             if(gamepad2.right_trigger > 0.1){
                 robot.lift.setPower(0.1);
+                robot.lift2.setPower(0.1);
             } else {
                 robot.lift.setPower(1);
+                robot.lift2.setPower(1);
             }
         }
         //endregion

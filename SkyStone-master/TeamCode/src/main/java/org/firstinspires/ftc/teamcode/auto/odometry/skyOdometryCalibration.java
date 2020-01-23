@@ -1,15 +1,13 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.auto.odometry;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.firstinspires.ftc.teamcode.auto.autoFunctions.skyAuto;
+import org.firstinspires.ftc.teamcode.skyHMAP;
 
 import java.io.File;
 
@@ -21,7 +19,7 @@ public class skyOdometryCalibration extends LinearOpMode {
 
 
 
-    final double PIVOT_SPEED = 0.5;
+    final double PIVOT_SPEED = 0.2;
     final double COUNTS_PER_INCH = 848.8265;
 
     ElapsedTime timer = new ElapsedTime();

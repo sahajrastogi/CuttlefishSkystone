@@ -35,6 +35,7 @@ public class  skyHMAP {
     public DcMotorEx iL;
     public DcMotorEx iR;
     public DcMotorEx lift;
+    public DcMotorEx lift2;
 
 
     public DcMotor vl;
@@ -68,6 +69,7 @@ public class  skyHMAP {
         iL = hwMap.get(DcMotorEx.class, "iL");
         iR = hwMap.get(DcMotorEx.class, "iR");
         lift = hwMap.get(DcMotorEx.class,"lift");
+        lift2 = hwMap.get(DcMotorEx.class,"lift2");
 
         fl.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         fr.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -87,7 +89,7 @@ public class  skyHMAP {
 
         vl = hwMap.get(DcMotor.class, "iL");
         vr = hwMap.get(DcMotor.class, "br");
-        h = hwMap.get(DcMotor.class, "odo");
+        h = hwMap.get(DcMotor.class, "iR");
 
 
         vl.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -104,12 +106,16 @@ public class  skyHMAP {
         //right is positive ticks for horizontal encoder
 
         iL.setDirection(DcMotorEx.Direction.REVERSE);
+        iR.setDirection(DcMotorEx.Direction.REVERSE);
+        lift.setDirection(DcMotorEx.Direction.FORWARD);
+        lift.setDirection(DcMotorEx.Direction.REVERSE);
+
         h.setDirection(DcMotorEx.Direction.REVERSE);
 
         iL.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         iR.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         lift.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-
+        lift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
         aR = hwMap.servo.get("ar");

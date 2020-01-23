@@ -1,9 +1,12 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.auto.odometry;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.teamcode.auto.autoFunctions.skyAuto;
+import org.firstinspires.ftc.teamcode.skyHMAP;
 
 /**
  * Created by Sarthak on 6/1/2019.
@@ -42,7 +45,7 @@ public class skyOdometryLocalizationTest extends LinearOpMode {
             //Display Global (x, y, theta) coordinates
             telemetry.addData("X Position", globalPos.returnXCoordinate());
             telemetry.addData("Y Position", globalPos.returnYCoordinate());
-            telemetry.addData("Orientation (Degrees)", globalPos.returnOrientation());
+            telemetry.addData("Orientation (Degrees)", Math.toDegrees(globalPos.returnOrientation()));
             telemetry.addData("Thread Active", positionThread.isAlive());
             telemetry.addData("deltatheta",globalPos.deltatheta);
             telemetry.addData("sleepDelay",timer.seconds()/globalPos.count);

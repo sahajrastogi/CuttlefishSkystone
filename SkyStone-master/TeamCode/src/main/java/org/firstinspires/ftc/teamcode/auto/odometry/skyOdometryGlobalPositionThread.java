@@ -1,9 +1,11 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.auto.odometry;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.firstinspires.ftc.teamcode.skyHMAP;
+import org.firstinspires.ftc.teamcode.auto.autoFunctions.Pos;
 
 import java.io.File;
 
@@ -77,7 +79,11 @@ public class skyOdometryGlobalPositionThread implements Runnable{
     public double returnYCoordinate(){ return globaly/COUNTS_PER_INCH; }
 
 
-    public double returnOrientation(){ return Math.toDegrees(orientation) % 360; }
+    public double returnOrientation(){ return orientation;}
+
+    public Pos returnPos(){
+        return new Pos(returnXCoordinate(),returnYCoordinate(),returnOrientation());
+    }
 
     public void stop(){ isRunning = false; }
 
