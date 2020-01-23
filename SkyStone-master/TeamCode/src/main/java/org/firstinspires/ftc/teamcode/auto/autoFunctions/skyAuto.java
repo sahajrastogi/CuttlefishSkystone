@@ -75,6 +75,11 @@ public class skyAuto extends LinearOpMode {
 
         double relativeTurnAngle = relAngleToTarget - Math.toRadians(180) + targetPos.theta; // change
 
+
+        robot.fl.setPower(movementYPower + movementXPower);
+        robot.fr.setPower(movementYPower - movementXPower);
+        robot.br.setPower(movementYPower + movementXPower);
+        robot.bl.setPower(movementYPower - movementXPower);
         //set powers
 
     }

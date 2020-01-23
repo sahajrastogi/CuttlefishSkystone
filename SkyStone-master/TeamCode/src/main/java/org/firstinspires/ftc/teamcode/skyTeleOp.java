@@ -74,16 +74,15 @@ public class skyTeleOp extends OpMode {
         if (dpUp.onRelease()) {
             lift2Pos = robot.lift2.getCurrentPosition();
             robot.lift2.setTargetPosition(lift2Pos);
-            robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.lift2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             liftPos = robot.lift.getCurrentPosition();
-
             robot.lift.setTargetPosition(liftPos);
             robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         } else if (dpDown.onRelease()) {
             lift2Pos = robot.lift2.getCurrentPosition();
             robot.lift2.setTargetPosition(lift2Pos);
-            robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.lift2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             liftPos = robot.lift.getCurrentPosition();
             robot.lift.setTargetPosition(liftPos);
@@ -198,6 +197,8 @@ public class skyTeleOp extends OpMode {
         telemetry.addData("rpos",robot.aR.getPosition());
         telemetry.addData("pos",robot.lift.getCurrentPosition());
         telemetry.addData("mode",robot.lift.getMode());
+        telemetry.addData("pos2",robot.lift2.getCurrentPosition());
+        telemetry.addData("mode2",robot.lift2.getMode());
         telemetry.addData("vl",robot.vl.getCurrentPosition());
         telemetry.addData("vr",robot.vr.getCurrentPosition());
         telemetry.addData("h",robot.h.getCurrentPosition());

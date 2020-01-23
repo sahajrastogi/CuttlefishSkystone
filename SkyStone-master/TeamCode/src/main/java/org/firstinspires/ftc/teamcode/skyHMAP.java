@@ -106,7 +106,7 @@ public class  skyHMAP {
         //right is positive ticks for horizontal encoder
 
         iL.setDirection(DcMotorEx.Direction.REVERSE);
-        iR.setDirection(DcMotorEx.Direction.REVERSE);
+        iR.setDirection(DcMotorEx.Direction.FORWARD);
         lift.setDirection(DcMotorEx.Direction.FORWARD);
         lift.setDirection(DcMotorEx.Direction.REVERSE);
 

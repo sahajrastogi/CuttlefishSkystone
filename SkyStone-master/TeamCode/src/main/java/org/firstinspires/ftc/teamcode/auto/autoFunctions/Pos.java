@@ -7,4 +7,8 @@ public class Pos {
         this.y = y;
         this.theta = theta;
     }
+
+    public String toString(){
+        return "" + x + " " + y + " " + theta;
+    }
 }
