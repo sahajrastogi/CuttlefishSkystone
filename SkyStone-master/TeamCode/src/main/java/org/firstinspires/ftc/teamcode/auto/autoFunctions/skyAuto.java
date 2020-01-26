@@ -19,6 +19,15 @@ import java.util.Locale;
 public class skyAuto extends LinearOpMode {
 
     skyHMAP robot;
+    public static double currFollowRadius = 7;
+    public static String telemetryString1 = "a";
+    public static String telemetryString2 = "a";
+    public static boolean currEndPointIsStopPoint = false;
+    public static double currFollowAngle = 90;
+    public static boolean loopIsOver = false;
+    public static double distToEndPoint = 80;
+    public static Point endPoint = new Point(0,0);
+    public double max = 0;
 
     public skyAuto(skyHMAP hwmap){
 
@@ -28,9 +37,15 @@ public class skyAuto extends LinearOpMode {
 
     }
 
-    public void followCurve(ArrayList<CurvePoint> allPoints, Pos robotPos, double followAngle){
-        CurvePoint followMe = getFollowPointPath(allPoints, robotPos, allPoints.get(0).followDistance);
-        goToPoint(robotPos, new Pos(followMe.x, followMe.y,followAngle),followMe.moveSpeed,followMe.turnSpeed);
+    public void followCurve(ArrayList<CurvePoint> allPoints, Pos robotPos){
+        CurvePoint followMe = getFollowPointPath(allPoints, robotPos, currFollowRadius);
+        goToPoint(robotPos, new Pos(followMe.x, followMe.y,currFollowAngle),followMe.moveSpeed,followMe.turnSpeed);
+
+    }
+
+    public void followCurveReverse(ArrayList<CurvePoint> allPoints, Pos robotPos){
+        CurvePoint followMe = getFollowPointPathReverse(allPoints, robotPos, currFollowRadius);
+        goToPoint(robotPos, new Pos(followMe.x, followMe.y,currFollowAngle),followMe.moveSpeed,followMe.turnSpeed);
     }
 
 
@@ -45,11 +60,18 @@ public class skyAuto extends LinearOpMode {
 
             double closestAngle = 100000;
             for(Point thisIntersection : intersections){
-                double angle = Math.atan2(thisIntersection.y - robotPos.y, thisIntersection.x-robotPos.x);
+                double angle = Math.atan2(thisIntersection.y - robotPos.y, thisIntersection.x - robotPos.x);
                 double deltaAngle = Math.abs(MathFunc.AngleWrap(angle - robotPos.theta));
 
                 if(deltaAngle < closestAngle){
                     closestAngle = deltaAngle;
+                    followMe = new CurvePoint(startLine);
+                    currFollowRadius = startLine.followDistance;
+                    currFollowAngle = startLine.followAngle;
+                    currEndPointIsStopPoint = endLine.isStopPoint;
+                    distToEndPoint = Math.hypot(robotPos.x - endLine.x,robotPos.y-endLine.y);
+                    endPoint.x = endLine.x;
+                    endPoint.y = endLine.y;
                     followMe.setPoint(thisIntersection);
                 }
 
@@ -58,8 +80,38 @@ public class skyAuto extends LinearOpMode {
 
         return followMe;
     }
-//i'm the best coder on the team
 
+    public static CurvePoint getFollowPointPathReverse(ArrayList<CurvePoint> pathPoints, Pos robotPos, double followRadius){
+        CurvePoint followMe = new CurvePoint(pathPoints.get(0));
+
+        for(int i=0;i<pathPoints.size()-1;i++){
+            CurvePoint startLine = pathPoints.get(i);
+            CurvePoint endLine = pathPoints.get(i+1);
+
+            ArrayList<Point> intersections = MathFunc.lineCircleIntersection(new Point(robotPos.x, robotPos.y), followRadius, startLine.toPoint(), endLine.toPoint());
+
+            double furthestAngle = -1;
+            for(Point thisIntersection : intersections){
+                double angle = Math.atan2(thisIntersection.y - robotPos.y, thisIntersection.x - robotPos.x);
+                double deltaAngle = Math.abs(MathFunc.AngleWrap(angle - robotPos.theta));
+
+                if(deltaAngle > furthestAngle){
+                    furthestAngle = deltaAngle;
+                    followMe = new CurvePoint(startLine);
+                    currFollowRadius = startLine.followDistance;
+                    currFollowAngle = startLine.followAngle;
+                    currEndPointIsStopPoint = endLine.isStopPoint;
+                    distToEndPoint = Math.hypot(robotPos.x - endLine.x,robotPos.y-endLine.y);
+                    endPoint.x = endLine.x;
+                    endPoint.y = endLine.y;
+                    followMe.setPoint(thisIntersection);
+                }
+
+            }
+        }
+
+        return followMe;
+    }
 
     public void goToPoint(Pos initialPos, Pos targetPos, double movementSpeed, double turnSpeed){
         double distToTarget = Math.hypot(targetPos.x-initialPos.x,targetPos.y-initialPos.y);
@@ -73,20 +125,115 @@ public class skyAuto extends LinearOpMode {
         double movementXPower = relativeXToPoint/(Math.abs(relativeXToPoint) + Math.abs(relativeYToPoint));
         double movementYPower = relativeYToPoint/(Math.abs(relativeXToPoint) + Math.abs(relativeYToPoint));
 
-        double relativeTurnAngle = relAngleToTarget - Math.toRadians(180) + targetPos.theta; // change
+        movementXPower *= movementSpeed;
+        movementYPower *= movementSpeed;
+
+        double relativeTurnAngle = initialPos.theta - targetPos.theta;
+
+        double movementTurn = Range.clip(relativeTurnAngle/Math.toRadians(60),-1,1)*turnSpeed;
+
+        if(distToTarget < 2){
+            movementTurn = 0;
+        }
+
+        double flPower = movementYPower + movementXPower + movementTurn;
+        double frPower = movementYPower - movementXPower - movementTurn;
+        double brPower = movementYPower + movementXPower - movementTurn;
+        double blPower = movementYPower - movementXPower + movementTurn;
+
+        flPower = Range.clip(flPower,-1,1);
+        frPower = Range.clip(frPower,-1,1);
+        brPower = Range.clip(brPower,-1,1);
+        blPower = Range.clip(blPower,-1,1);
+
+        max = flPower;
+        if(frPower > max){
+            max = frPower;
+        }
+        if(brPower > max){
+            max = brPower;
+        }
+        if(blPower > max){
+            max = blPower;
+        }
+
+        if(max > 1) {
+
+            flPower /= max;
+            frPower /= max;
+            brPower /= max;
+            blPower /= max;
+        }
 
 
-        robot.fl.setPower(movementYPower + movementXPower);
-        robot.fr.setPower(movementYPower - movementXPower);
-        robot.br.setPower(movementYPower + movementXPower);
-        robot.bl.setPower(movementYPower - movementXPower);
+        if(currEndPointIsStopPoint && distToEndPoint < currFollowRadius){
+            //region redo loop
+            distToTarget = Math.hypot(endPoint.x-initialPos.x,endPoint.y-initialPos.y);
+
+            absAngleToTarget = Math.atan2(endPoint.y-initialPos.y,endPoint.x-initialPos.x);
+
+            relAngleToTarget = MathFunc.AngleWrap(absAngleToTarget - (initialPos.theta - Math.toRadians(90)));
+
+            relativeXToPoint = Math.cos(relAngleToTarget)*distToTarget;
+            relativeYToPoint = Math.sin(relAngleToTarget)*distToTarget;
+            movementXPower = relativeXToPoint/(Math.abs(relativeXToPoint) + Math.abs(relativeYToPoint));
+            movementYPower = relativeYToPoint/(Math.abs(relativeXToPoint) + Math.abs(relativeYToPoint));
+
+            movementXPower *= movementSpeed;
+            movementYPower *= movementSpeed;
+
+            relativeTurnAngle = initialPos.theta - targetPos.theta;
+
+            movementTurn = Range.clip(relativeTurnAngle/Math.toRadians(45),-1,1)*turnSpeed;
+
+            flPower = movementYPower + movementXPower + movementTurn;
+            frPower = movementYPower - movementXPower - movementTurn;
+            brPower = movementYPower + movementXPower - movementTurn;
+            blPower = movementYPower - movementXPower + movementTurn;
+
+            max = flPower;
+            if(frPower > max){
+                max = frPower;
+            }
+            if(brPower > max){
+                max = brPower;
+            }
+            if(blPower > max){
+                max = blPower;
+            }
+
+            if(max > 1) {
+                flPower /= max;
+                frPower /= max;
+                brPower /= max;
+                blPower /= max;
+            }
+            double changeCoeff = 10/distToEndPoint;
+
+            if(changeCoeff > 5){
+                changeCoeff = 5;
+            }
+
+            flPower /= (changeCoeff);
+            frPower /= (changeCoeff);
+            brPower /= (changeCoeff);
+            blPower /= (changeCoeff);
+            //endregion
+
+        }
+
+        if(currEndPointIsStopPoint && (distToEndPoint < 1)){
+            loopIsOver = true;
+        }
+
+        telemetryString1 = distToEndPoint + "";
+        robot.fl.setPower(flPower);
+        robot.fr.setPower(frPower);
+        robot.br.setPower(brPower);
+        robot.bl.setPower(blPower);
         //set powers
 
     }
-
-
-
-
 
 
     //------------------------------------------------------------------------------------------------------------------------------

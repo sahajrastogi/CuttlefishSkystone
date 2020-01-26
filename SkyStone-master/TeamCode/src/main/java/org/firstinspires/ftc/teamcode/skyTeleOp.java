@@ -45,7 +45,7 @@ public class skyTeleOp extends OpMode {
 
         //region intake
         robot.iL.setPower(gamepad2.right_stick_y);
-        robot.iR.setPower(gamepad2.right_stick_y);
+        robot.iR.setPower(-gamepad2.right_stick_y);
         //endregion
 
         //region check lift
@@ -121,14 +121,14 @@ public class skyTeleOp extends OpMode {
             //grab
             if (clawPos == 0 && loopOver) {
                 robot.aL.setPosition(0.8);
-                robot.aR.setPosition(0.15);
+                robot.aR.setPosition(0.17);
                 clawPos = 1;
                 loopOver = false;
             }
             //deposit
             if(clawPos == 1 && loopOver) {
                 robot.aL.setPosition(0.1);
-                robot.aR.setPosition(0.9);
+                robot.aR.setPosition(0.92);
                 clawPos = 2;
                 loopOver = false;
             }
@@ -138,7 +138,7 @@ public class skyTeleOp extends OpMode {
 
 
                 robot.aL.setPosition(0.7);
-                robot.aR.setPosition(0.25);
+                robot.aR.setPosition(0.27);
                 clawPos = 0;
                 loopOver = false;
 
@@ -153,7 +153,7 @@ public class skyTeleOp extends OpMode {
 
         if(grabbed){
             robot.gf.setPosition(0.7);
-            robot.gs.setPosition(0.62);
+            robot.gs.setPosition(0.51);
         } else {
             robot.gf.setPosition(0.2);
             robot.gs.setPosition(0.92);

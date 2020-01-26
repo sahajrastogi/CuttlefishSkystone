@@ -8,7 +8,4 @@ public class Pos {
         this.theta = theta;
     }
 
-    public String toString(){
-        return "" + x + " " + y + " " + theta;
-    }
 }

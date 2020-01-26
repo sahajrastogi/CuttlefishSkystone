@@ -6,19 +6,19 @@ public class CurvePoint {
     public double moveSpeed;
     public double turnSpeed;
     public double followDistance;
-    public double pointLength;
-    public double slowDownTurnRadians;
-    public double slowDownTurnAmount;
+    public double followAngle;
+    public boolean isStopPoint;
 
-    public CurvePoint(double x, double y, double moveSpeed, double turnSpeed, double followDistance, double pointLength, double slowDownTurnRadians, double slowDownTurnAmount){
+
+    public CurvePoint(double x, double y, double moveSpeed, double turnSpeed, double followDistance, double followAngle, boolean isStopPoint){
         this.x=x;
         this.y=y;
         this.moveSpeed= moveSpeed;
         this.turnSpeed = turnSpeed;
         this.followDistance = followDistance;
-        this.pointLength = pointLength;
-        this.slowDownTurnRadians = slowDownTurnRadians;
-        this. slowDownTurnAmount = slowDownTurnAmount;
+        this.followAngle = followAngle;
+        this.isStopPoint = isStopPoint;
+
     }
 
     public CurvePoint(CurvePoint p){
@@ -27,9 +27,9 @@ public class CurvePoint {
         moveSpeed = p.moveSpeed;
         turnSpeed = p.turnSpeed;
         followDistance = p.followDistance;
-        pointLength = p.pointLength;
-        slowDownTurnAmount = p. slowDownTurnAmount;
-        slowDownTurnRadians = p.slowDownTurnRadians;
+        followAngle = p.followAngle;
+        isStopPoint = p.isStopPoint;
+
     }
 
     public Point toPoint(){

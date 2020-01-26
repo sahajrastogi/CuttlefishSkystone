@@ -67,8 +67,6 @@ public class MathFunc {
         }
         return allPoints;
 
-
     }
-
 
 }
