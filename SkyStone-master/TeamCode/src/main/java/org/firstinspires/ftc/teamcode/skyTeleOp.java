@@ -155,7 +155,7 @@ public class skyTeleOp extends OpMode {
             robot.gf.setPosition(0.7);
             robot.gs.setPosition(0.51);
         } else {
-            robot.gf.setPosition(0.2);
+            robot.gf.setPosition(0.27);
             robot.gs.setPosition(0.92);
         }
 
@@ -164,10 +164,9 @@ public class skyTeleOp extends OpMode {
             if(g2a.onPress()){
                 fgrabbersUp = !fgrabbersUp;
             }
-
-            if(fgrabbersUp){
-                robot.fgl.setPosition(0.6);
-                robot.fgr.setPosition(0.4);
+        if(fgrabbersUp){
+            robot.fgl.setPosition(0.6);
+            robot.fgr.setPosition(0.4);
         } else{
             robot.fgl.setPosition(0.3);
             robot.fgr.setPosition(0.7);

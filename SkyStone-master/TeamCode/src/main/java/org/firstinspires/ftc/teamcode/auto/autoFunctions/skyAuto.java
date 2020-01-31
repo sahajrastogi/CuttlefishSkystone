@@ -27,6 +27,7 @@ public class skyAuto extends LinearOpMode {
     public static boolean loopIsOver = false;
     public static double distToEndPoint = 80;
     public static Point endPoint = new Point(0,0);
+    public static double stopRadius = 4;
     public double max = 0;
 
     public skyAuto(skyHMAP hwmap){
@@ -210,8 +211,8 @@ public class skyAuto extends LinearOpMode {
             }
             double changeCoeff = 10/distToEndPoint;
 
-            if(changeCoeff > 5){
-                changeCoeff = 5;
+            if(changeCoeff > 3){
+                changeCoeff = 3;
             }
 
             flPower /= (changeCoeff);
@@ -222,7 +223,7 @@ public class skyAuto extends LinearOpMode {
 
         }
 
-        if(currEndPointIsStopPoint && (distToEndPoint < 1)){
+        if(currEndPointIsStopPoint && (distToEndPoint < stopRadius)){
             loopIsOver = true;
         }
 
@@ -354,5 +355,29 @@ public class skyAuto extends LinearOpMode {
         return hi;
     }
 
+    public void grabPos(){
+        robot.aL.setPosition(0.8);
+        robot.aR.setPosition(0.17);
+    }
+
+    public void depositPos(){
+        robot.aL.setPosition(0.1);
+        robot.aR.setPosition(0.92);
+    }
+
+    public void intakePos(){
+        robot.aL.setPosition(0.7);
+        robot.aR.setPosition(0.27);
+    }
+
+    public void grab(){
+        robot.gf.setPosition(0.7);
+        robot.gs.setPosition(0.51);
+    }
+
+    public void release(){
+        robot.gf.setPosition(0.27);
+        robot.gs.setPosition(0.92);
+    }
 
 }
