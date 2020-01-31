@@ -18,12 +18,14 @@ public class skyTeleOp extends OpMode {
     public boolean fgrabbersUp = true;
     public boolean loopOver = true;
     public boolean grabbed = false;
+    public boolean capstoneHeldUp = true;
 
     ButtonOp dpUp = new ButtonOp();
     ButtonOp dpDown = new ButtonOp();
     ButtonOp g2x = new ButtonOp();
     ButtonOp g2y = new ButtonOp();
     ButtonOp g2a = new ButtonOp();
+    ButtonOp g1x = new ButtonOp();
 
     public void init() {
         robot.init(hardwareMap, false);
@@ -41,6 +43,7 @@ public class skyTeleOp extends OpMode {
         g2x.update(gamepad2.x);
         g2y.update(gamepad2.y);
         g2a.update(gamepad2.a);
+        g1x.update(gamepad1.x);
         //endregion
 
         //region intake
@@ -48,6 +51,18 @@ public class skyTeleOp extends OpMode {
         robot.iR.setPower(-gamepad2.right_stick_y);
         //endregion
 
+        //region capstone
+        if(g2a.onPress()){
+            capstoneHeldUp = !capstoneHeldUp;
+        }
+
+        if(capstoneHeldUp){
+            robot.cap.setPosition(0);
+        } else {
+            robot.cap.setPosition(1);
+        }
+
+        //endregion
         //region check lift
         if(robot.lift.getMode().equals(DcMotor.RunMode.RUN_TO_POSITION)) {
             if (robot.lift.getCurrentPosition() < liftPos) {
@@ -136,9 +151,8 @@ public class skyTeleOp extends OpMode {
             //intake
             if(clawPos == 2 && loopOver) {
 
-
-                robot.aL.setPosition(0.7);
-                robot.aR.setPosition(0.27);
+                robot.aL.setPosition(0.685);
+                robot.aR.setPosition(0.285);
                 clawPos = 0;
                 loopOver = false;
 
@@ -160,10 +174,12 @@ public class skyTeleOp extends OpMode {
         }
 
             //endregion
-            //region foundation grabbers
-            if(g2a.onPress()){
-                fgrabbersUp = !fgrabbersUp;
-            }
+
+        //region foundation grabbers
+
+        if(g1x.onPress()){
+            fgrabbersUp = !fgrabbersUp;
+        }
         if(fgrabbersUp){
             robot.fgl.setPosition(0.6);
             robot.fgr.setPosition(0.4);

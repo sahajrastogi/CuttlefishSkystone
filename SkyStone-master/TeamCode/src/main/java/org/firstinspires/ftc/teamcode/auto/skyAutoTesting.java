@@ -2,13 +2,11 @@ package org.firstinspires.ftc.teamcode.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.ButtonOp;
 import org.firstinspires.ftc.teamcode.auto.autoFunctions.CurvePoint;
 import org.firstinspires.ftc.teamcode.auto.autoFunctions.Point;
 import org.firstinspires.ftc.teamcode.auto.autoFunctions.skyAuto;
@@ -16,29 +14,150 @@ import org.firstinspires.ftc.teamcode.auto.odometry.skyOdometryGlobalPositionThr
 import org.firstinspires.ftc.teamcode.skyHMAP;
 
 
-import org.opencv.core.Mat;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvPipeline;
+
 import java.util.ArrayList;
 
 @Autonomous
 public class skyAutoTesting extends LinearOpMode {
 
+    SamplePipelineRed pipe = new SamplePipelineRed();
+    OpenCvCamera webcam;
     public skyHMAP robot = new skyHMAP();
     public skyAuto robotAuto;
     private double ly,lx, rx;
     public DcMotorEx odo;
     ElapsedTime timer = new ElapsedTime();
 
+    String finalVerdict = "";
+    boolean boxLeft = true;
+    ButtonOp g1a = new ButtonOp();
+    ButtonOp g1b = new ButtonOp();
+    ButtonOp g1x = new ButtonOp();
+    ButtonOp g1y = new ButtonOp();
+    ButtonOp g1du = new ButtonOp();
+    ButtonOp g1dd = new ButtonOp();
+    ButtonOp g1dl = new ButtonOp();
+    ButtonOp g1dr = new ButtonOp();
+    ButtonOp g1bl = new ButtonOp();
+    ButtonOp g1br = new ButtonOp();
+
+
 
     public void runOpMode() throws InterruptedException {
 
         robot.init(hardwareMap,false);
         robotAuto = new skyAuto(robot);
+
+        //region vision
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        webcam.openCameraDevice();
+        webcam.setPipeline(pipe);
+        webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+
+        while(true){
+            if(boxLeft){
+                if(g1dr.onRelease()){
+                    pipe.x1 += 5;
+                }
+                if(g1dl.onRelease()){
+                    pipe.x1 -= 5;
+                }
+                if(g1du.onRelease()){
+                    pipe.y1 -=5;
+                }
+                if(g1dd.onRelease()){
+                    pipe.y1 +=5;
+                }
+
+                if(g1b.onRelease()){
+                    pipe.x2 += 5;
+                }
+                if(g1x.onRelease()){
+                    pipe.x2 -= 5;
+                }
+                if(g1y.onRelease()){
+                    pipe.y2 -=5;
+                }
+                if(g1a.onRelease()){
+                    pipe.y2 +=5;
+                }
+            } else {
+                if(g1dr.onRelease()){
+                    pipe.x3 += 5;
+                }
+                if(g1dl.onRelease()){
+                    pipe.x3 -= 5;
+                }
+                if(g1du.onRelease()){
+                    pipe.y3 -=5;
+                }
+                if(g1dd.onRelease()){
+                    pipe.y3 +=5;
+                }
+
+                if(g1b.onRelease()){
+                    pipe.x4 += 5;
+                }
+                if(g1x.onRelease()){
+                    pipe.x4 -= 5;
+                }
+                if(g1y.onRelease()){
+                    pipe.y4 -=5;
+                }
+                if(g1a.onRelease()){
+                    pipe.y4 +=5;
+                }
+            }
+
+            if(g1bl.onPress() || g1br.onPress()){
+                boxLeft = !boxLeft;
+
+            }
+
+            if(gamepad1.left_trigger > 0.1){
+                pipe.check = true;
+            } else {
+                pipe.check = false;
+            }
+
+            g1a.update(gamepad1.a);
+            g1b.update(gamepad1.b);
+            g1y.update(gamepad1.y);
+            g1x.update(gamepad1.x);
+            g1dd.update(gamepad1.dpad_down);
+            g1du.update(gamepad1.dpad_up);
+            g1dl.update(gamepad1.dpad_left);
+            g1dr.update(gamepad1.dpad_right);
+            g1bl.update(gamepad1.left_bumper);
+            g1br.update(gamepad1.right_bumper);
+            if(isStarted()){
+                break;
+            }
+            telemetry.addData("boxLeft",boxLeft);
+            telemetry.addData("a1s",pipe.a1s);
+            telemetry.addData("a2s",pipe.a2s);
+            telemetry.addData("a3s",pipe.a3s);
+            telemetry.addData("verdictL",pipe.verdictL);
+            telemetry.addData("verdictR",pipe.verdictR);
+
+            telemetry.addData("x1",pipe.x1);
+            telemetry.addData("y1",pipe.y1);
+            telemetry.addData("x2",pipe.x2);
+            telemetry.addData("y2",pipe.y2);
+            telemetry.addData("x3",pipe.x3);
+            telemetry.addData("y3",pipe.y3);
+            telemetry.addData("x4",pipe.x4);
+            telemetry.addData("y4",pipe.y4);
+            telemetry.update();
+        }
+
+        //endregion
+
+
         skyAuto.currFollowRadius = 3;
 
         robotAuto.intakePos();

@@ -52,7 +52,7 @@ public class  skyHMAP {
     public Servo gs;
     public Servo gf;
 
-
+    public Servo cap;
 
     HardwareMap hwMap;
 
@@ -126,6 +126,8 @@ public class  skyHMAP {
 
         gs = hwMap.servo.get("gs");
         gf = hwMap.servo.get("gf");
+
+        cap = hwMap.servo.get("cap");
 
         if(gyro) {
             BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();

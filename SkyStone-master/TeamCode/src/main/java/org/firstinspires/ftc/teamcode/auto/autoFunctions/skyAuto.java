@@ -366,8 +366,8 @@ public class skyAuto extends LinearOpMode {
     }
 
     public void intakePos(){
-        robot.aL.setPosition(0.7);
-        robot.aR.setPosition(0.27);
+        robot.aL.setPosition(0.685);
+        robot.aR.setPosition(0.285);
     }
 
     public void grab(){
