@@ -21,29 +21,22 @@
 
 package org.firstinspires.ftc.teamcode.auto;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-class SamplePipelineRed extends OpenCvPipeline
+class SamplePipelineBlue extends OpenCvPipeline
 {
-    public int x1 = 315;
-    public int y1 = 550;
-    public int x2 = 500;
-    public int y2 = 630;
-    public int x3 = 570;
-    public int y3 = 550;
-    public int x4 = 745;
-    public int y4 = 630;
+    public int x1 = 225;
+    public int y1 = 480;
+    public int x2 = 410;
+    public int y2 = 585;
+    public int x3 = 455;
+    public int y3 = 485;
+    public int x4 = 655;
+    public int y4 = 575;
     public String verdictL = "wait";
     public String verdictR = "wait";
 

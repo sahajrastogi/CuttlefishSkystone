@@ -21,7 +21,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 
 @Autonomous
-public class skyAutoTesting extends LinearOpMode {
+public class skyAutoRed extends LinearOpMode {
 
     SamplePipelineRed pipe = new SamplePipelineRed();
     OpenCvCamera webcam;
@@ -51,13 +51,15 @@ public class skyAutoTesting extends LinearOpMode {
         robot.init(hardwareMap,false);
         robotAuto = new skyAuto(robot);
 
+        robot.cap.setPosition(0);
         //region vision
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         webcam.openCameraDevice();
         webcam.setPipeline(pipe);
-        webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+        webcam.startStreaming(960, 720, OpenCvCameraRotation.UPRIGHT);
 
+        pipe.check = true;
         while(true){
             if(boxLeft){
                 if(g1dr.onRelease()){
@@ -118,12 +120,6 @@ public class skyAutoTesting extends LinearOpMode {
 
             }
 
-            if(gamepad1.left_trigger > 0.1){
-                pipe.check = true;
-            } else {
-                pipe.check = false;
-            }
-
             g1a.update(gamepad1.a);
             g1b.update(gamepad1.b);
             g1y.update(gamepad1.y);
@@ -157,20 +153,48 @@ public class skyAutoTesting extends LinearOpMode {
 
         //endregion
 
-
         skyAuto.currFollowRadius = 3;
 
         robotAuto.intakePos();
         robotAuto.release();
 
-
-        ArrayList<CurvePoint> allPoints = new ArrayList<CurvePoint>();
-        allPoints.add(new CurvePoint(0.0,0.0,0.85,0.6,7,Math.toRadians(135),false));
-        allPoints.add(new CurvePoint(-1,27.0,0.85,0.6,7,Math.toRadians(135),false));
-        allPoints.add(new CurvePoint(-7,45.0,0.5,0.5,7,Math.toRadians(135),true));
-
         timer.startTime();
         waitForStart();
+
+
+        pipe.check = false;
+        if(pipe.verdictL.equals("stone") && pipe.verdictR.equals("stone")){
+            finalVerdict = "left";
+        }
+        if(pipe.verdictL.equals("stone") && pipe.verdictR.equals("skystone")){
+            finalVerdict = "right";
+        }
+        if(pipe.verdictL.equals("skystone") && pipe.verdictR.equals("stone")){
+            finalVerdict = "middle";
+        }
+
+
+        ArrayList<CurvePoint> allPoints = new ArrayList<CurvePoint>();
+        if(finalVerdict.equals("right")) {
+            allPoints.add(new CurvePoint(0.0, 0.0, 0.85, 0.6, 7, Math.toRadians(135), false));
+            allPoints.add(new CurvePoint(-1, 28.0, 0.85, 0.6, 7, Math.toRadians(135), false));
+            allPoints.add(new CurvePoint(-7.25, 48.0, 0.5, 0.5, 7, Math.toRadians(135), true));
+        } else if(finalVerdict.equals("middle")){
+            allPoints.add(new CurvePoint(0.0, 0.0, 0.85, 0.6, 7, Math.toRadians(135), false));
+            allPoints.add(new CurvePoint(-5.5, 28.0, 0.85, 0.6, 7, Math.toRadians(135), false));
+            allPoints.add(new CurvePoint(-10, 48.0, 0.5, 0.5, 7, Math.toRadians(135), true));
+        } else if(finalVerdict.equals("left")){
+            allPoints.add(new CurvePoint(0.0, 0.0, 0.85, 0.6, 7, Math.toRadians(135), false));
+            allPoints.add(new CurvePoint(-15, 28.0, 0.69, 0.6, 7, Math.toRadians(135), false));
+            allPoints.add(new CurvePoint(-22, 48.0, 0.5, 0.5, 7, Math.toRadians(135), true));
+        } else {
+
+            allPoints.add(new CurvePoint(0.0, 0.0, 0.85, 0.6, 7, Math.toRadians(135), false));
+            allPoints.add(new CurvePoint(-1, 28.0, 0.85, 0.6, 7, Math.toRadians(135), false));
+            allPoints.add(new CurvePoint(-7.25, 48.0, 0.5, 0.5, 7, Math.toRadians(135), true));
+        }
+
+
         robot.iL.setPower(1);
         robot.iR.setPower(-1);
         robot.fgl.setPosition(0.6);
@@ -181,6 +205,7 @@ public class skyAutoTesting extends LinearOpMode {
         positionThread.start();
 
 
+        skyAuto.stopRadius = 5;
         skyAuto.currFollowRadius = 7;
         skyAuto.currEndPointIsStopPoint = false;
         skyAuto.currFollowAngle = 90;
@@ -189,6 +214,7 @@ public class skyAutoTesting extends LinearOpMode {
         skyAuto.endPoint = new Point(0,0);
 
         while(!skyAuto.loopIsOver) {
+            telemetry.addData("finalVerdict",finalVerdict);
             telemetry.addData("telString1",skyAuto.telemetryString1);
             telemetry.addData("telString2",skyAuto.telemetryString2);
             telemetry.addData("robotAngle", Math.toDegrees(globalPos.returnOrientation()));
@@ -204,8 +230,26 @@ public class skyAutoTesting extends LinearOpMode {
 
 
         allPoints = new ArrayList<CurvePoint>();
-        allPoints.add(new CurvePoint(-8,50,0.7,0.8,7,Math.toRadians(110),false));
-        allPoints.add(new CurvePoint(0.0,31.0,0.75,0.7,7,Math.toRadians(180),false));
+
+
+
+        if(finalVerdict.equals("right")) {
+            allPoints.add(new CurvePoint(-8,50,0.7,0.8,7,Math.toRadians(110),false));
+            allPoints.add(new CurvePoint(0.0,31.0,0.75,0.7,7,Math.toRadians(180),false));
+
+        } else if(finalVerdict.equals("middle")){
+            allPoints.add(new CurvePoint(-13,50,0.7,0.8,7,Math.toRadians(110),false));
+            allPoints.add(new CurvePoint(-9,31.0,0.75,0.7,7,Math.toRadians(180),false));
+
+        } else if(finalVerdict.equals("left")){
+            allPoints.add(new CurvePoint(-22,48,0.7,0.8,7,Math.toRadians(110),false));
+            allPoints.add(new CurvePoint(-18,31.0,0.75,0.7,7,Math.toRadians(180),false));
+
+        } else {
+            allPoints.add(new CurvePoint(-8,50,0.7,0.8,7,Math.toRadians(110),false));
+            allPoints.add(new CurvePoint(0.0,31.0,0.75,0.7,7,Math.toRadians(180),false));
+
+        }
         allPoints.add(new CurvePoint(70.0,31.0,0.4,0.7,7,Math.toRadians(270),false));
         allPoints.add(new CurvePoint(80,40,0.6,0.6,5,Math.toRadians(270),false));
         allPoints.add(new CurvePoint(80,51,0.6,0.6,5,Math.toRadians(270),true));
@@ -240,7 +284,7 @@ public class skyAutoTesting extends LinearOpMode {
         robotAuto.stopDriving();
 
         robot.fgl.setPosition(0.3);
-        robot.fgr.setPosition(0.7);
+        robot.fgr.setPosition(0.62);
         sleep(300);
 
         robotAuto.release();
@@ -249,8 +293,8 @@ public class skyAutoTesting extends LinearOpMode {
         skyAuto.stopRadius = 5.5;
 
         allPoints = new ArrayList<CurvePoint>();
-        allPoints.add(new CurvePoint(80,50,0.85,0.6,7,Math.toRadians(180),false));
-        allPoints.add(new CurvePoint(60,30.5,0.9,0.6,7,Math.toRadians(180),true));
+        allPoints.add(new CurvePoint(80,50,0.85,0.65,7,Math.toRadians(180),false));
+        allPoints.add(new CurvePoint(55,26.5,0.9,0.65,7,Math.toRadians(180),true));
 
 
         skyAuto.currFollowRadius = 7;
@@ -293,10 +337,26 @@ public class skyAutoTesting extends LinearOpMode {
 
         allPoints = new ArrayList<CurvePoint>();
         allPoints.add(new CurvePoint(65,30.5,0.9,0.5,7,Math.toRadians(180),false));
-        allPoints.add(new CurvePoint(45,30.5,0.55,0.8,7,Math.toRadians(180),false));
-        allPoints.add(new CurvePoint(26,30.5,0.4,0.8,7,Math.toRadians(140),false));
-        allPoints.add(new CurvePoint(8,46,0.4,0.8,7,Math.toRadians(140),true));
+        allPoints.add(new CurvePoint(45,30.5,0.5,0.8,7,Math.toRadians(180),false));
 
+
+
+        if(finalVerdict.equals("right")) {
+            allPoints.add(new CurvePoint(28,30.5,0.5,0.8,7,Math.toRadians(140),false));
+            allPoints.add(new CurvePoint(10,48,0.5,0.8,7,Math.toRadians(140),true));
+
+        } else if(finalVerdict.equals("middle")){
+            allPoints.add(new CurvePoint(23,30.5,0.5,0.8,7,Math.toRadians(140),false));
+            allPoints.add(new CurvePoint(5,43,0.5,0.8,7,Math.toRadians(140),true));
+
+        } else if(finalVerdict.equals("left")){
+            allPoints.add(new CurvePoint(13,30.5,0.55,0.8,7,Math.toRadians(140),false));
+            allPoints.add(new CurvePoint(-3,48,0.5,0.8,7,Math.toRadians(140),true));
+
+        } else {
+            allPoints.add(new CurvePoint(28,30.5,0.5,0.8,7,Math.toRadians(140),false));
+            allPoints.add(new CurvePoint(10,48,0.5,0.8,7,Math.toRadians(140),true));
+        }
 
 
         while(!skyAuto.loopIsOver) {
@@ -327,11 +387,24 @@ public class skyAutoTesting extends LinearOpMode {
         robot.iR.setPower(-1);
 
         allPoints = new ArrayList<CurvePoint>();
-        allPoints.add(new CurvePoint(11,46,0.9,0.7,7,Math.toRadians(180),false));
+
+        if(finalVerdict.equals("right")) {
+            allPoints.add(new CurvePoint(11,46,0.9,0.7,7,Math.toRadians(180),false));
+        } else if(finalVerdict.equals("middle")){
+            allPoints.add(new CurvePoint(5,43,0.9,0.7,7,Math.toRadians(180),false));
+
+        } else if(finalVerdict.equals("left")){
+            allPoints.add(new CurvePoint(-1,40,0.9,0.7,7,Math.toRadians(180),false));
+
+        } else {
+            allPoints.add(new CurvePoint(11,46,0.9,0.7,7,Math.toRadians(180),false));
+
+        }
+
         allPoints.add(new CurvePoint(13,31.5,0.8,0.9,7,Math.toRadians(180),false));
-        allPoints.add(new CurvePoint(40,31,0.8,0.9,7,Math.toRadians(200),false));
-        allPoints.add(new CurvePoint(60,37,1,0.5,7,Math.toRadians(180),false));
-        allPoints.add(new CurvePoint(80,39,1,0.5,7,Math.toRadians(180),true));
+        allPoints.add(new CurvePoint(40,31,0.8,0.9,7,Math.toRadians(180),false));
+        allPoints.add(new CurvePoint(60,31,1,0.5,7,Math.toRadians(180),false));
+        allPoints.add(new CurvePoint(83,31,1,0.5,7,Math.toRadians(180),true));
 
 
 
@@ -341,7 +414,7 @@ public class skyAutoTesting extends LinearOpMode {
                 robotAuto.grabPos();
                 robotAuto.grab();
             }
-            if(globalPos.returnXCoordinate() > 65){
+            if(globalPos.returnXCoordinate() > 60){
                 robotAuto.depositPos();
             }
 
@@ -355,7 +428,7 @@ public class skyAutoTesting extends LinearOpMode {
             robotAuto.followCurveReverse(allPoints,globalPos.returnPos());
         }
         robotAuto.stopDriving();
-        Thread.sleep(50);
+        Thread.sleep(150);
         robotAuto.release();
         sleep(300);
         robotAuto.intakePos();
@@ -375,8 +448,8 @@ public class skyAutoTesting extends LinearOpMode {
         robot.iR.setPower(-1);
 
         allPoints = new ArrayList<CurvePoint>();
-        allPoints.add(new CurvePoint(90,31,0.8,0.9,7,Math.toRadians(180),false));
-        allPoints.add(new CurvePoint(60,31,0.65,0.5,7,Math.toRadians(180),true));
+        allPoints.add(new CurvePoint(83,31,0.8,0.9,7,Math.toRadians(180),false));
+        allPoints.add(new CurvePoint(50,31,0.65,0.5,7,Math.toRadians(180),true));
 
 
         while(!skyAuto.loopIsOver) {
@@ -391,6 +464,7 @@ public class skyAutoTesting extends LinearOpMode {
         }
         robotAuto.stopDriving();
         Thread.sleep(50);
+        webcam.stopStreaming();
 
 
 

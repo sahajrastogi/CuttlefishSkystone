@@ -185,7 +185,7 @@ public class skyTeleOp extends OpMode {
             robot.fgr.setPosition(0.4);
         } else{
             robot.fgl.setPosition(0.3);
-            robot.fgr.setPosition(0.7);
+            robot.fgr.setPosition(0.62);
         }
         //endregion
 
