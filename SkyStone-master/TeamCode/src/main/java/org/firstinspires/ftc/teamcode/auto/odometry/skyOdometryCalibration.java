@@ -32,7 +32,7 @@ public class skyOdometryCalibration extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        robot.init(hardwareMap,true);
+        robot.init(hardwareMap,true,false);
         robotAuto = new skyAuto(robot);
         timer.startTime();
 

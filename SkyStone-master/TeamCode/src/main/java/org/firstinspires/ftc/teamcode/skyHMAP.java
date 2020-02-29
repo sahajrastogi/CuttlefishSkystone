@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -54,9 +55,12 @@ public class  skyHMAP {
 
     public Servo cap;
 
+    public DistanceSensor dist;
+
+    public RevBlinkinLedDriver blinkin;
     HardwareMap hwMap;
 
-    public void init(HardwareMap ahwMap, boolean gyro) {
+    public void init(HardwareMap ahwMap, boolean gyro, boolean distance) {
         hwMap = ahwMap;
 
         /*Motors*/
@@ -129,6 +133,8 @@ public class  skyHMAP {
 
         cap = hwMap.servo.get("cap");
 
+        blinkin = hwMap.get(RevBlinkinLedDriver.class,"l");
+
         if(gyro) {
             BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
             parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -141,7 +147,10 @@ public class  skyHMAP {
             imu = hwMap.get(BNO055IMU.class, "imu");
             imu.initialize(parameters);
         }
+
+        if(distance){
+            dist = hwMap.get(DistanceSensor.class, "dist");
+        }
     }
-
-
 }
+

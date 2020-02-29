@@ -1,11 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
 import android.widget.Button;
+
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @TeleOp
 public class skyTeleOp extends OpMode {
@@ -14,7 +20,7 @@ public class skyTeleOp extends OpMode {
     public double ly, lx, rx;
     public int liftPos;
     public int lift2Pos;
-    public int clawPos = 0;
+    public int clawPos = 2;
     public boolean fgrabbersUp = true;
     public boolean loopOver = true;
     public boolean grabbed = false;
@@ -26,9 +32,14 @@ public class skyTeleOp extends OpMode {
     ButtonOp g2y = new ButtonOp();
     ButtonOp g2a = new ButtonOp();
     ButtonOp g1x = new ButtonOp();
+    ButtonOp g1lt = new ButtonOp();
+
+    public ElapsedTime timer1 = new ElapsedTime();
+    public boolean timer1Bool = false;
 
     public void init() {
-        robot.init(hardwareMap, false);
+        robot.init(hardwareMap, false,false);
+        timer1.startTime();
     }
 
     public void start() {
@@ -36,6 +47,9 @@ public class skyTeleOp extends OpMode {
     }
 
     public void loop() {
+        //region lights
+            robot.blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.DARK_GREEN);
+        //endregion
 
         //region update buttons
         dpUp.update(gamepad2.dpad_up);
@@ -44,6 +58,7 @@ public class skyTeleOp extends OpMode {
         g2y.update(gamepad2.y);
         g2a.update(gamepad2.a);
         g1x.update(gamepad1.x);
+        g1lt.update(gamepad1.left_trigger > 0.1);
         //endregion
 
         //region intake
@@ -109,8 +124,8 @@ public class skyTeleOp extends OpMode {
             robot.lift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
             if(gamepad2.right_trigger > 0.1){
-                robot.lift.setPower(-0.1);
-                robot.lift2.setPower(-0.1);
+                robot.lift.setPower(-0.5);
+                robot.lift2.setPower(-0.5);
             } else {
                 robot.lift.setPower(-1);
                 robot.lift2.setPower(-1);
@@ -132,27 +147,28 @@ public class skyTeleOp extends OpMode {
 
         //region claw
         //X is Pressed
-        if(g2x.onPress()) {
+        if(g2x.onPress() || g1lt.onPress()) {
             //grab
             if (clawPos == 0 && loopOver) {
                 robot.aL.setPosition(0.8);
                 robot.aR.setPosition(0.17);
+                grabbed = true;
                 clawPos = 1;
                 loopOver = false;
             }
             //deposit
             if(clawPos == 1 && loopOver) {
                 robot.aL.setPosition(0.1);
-                robot.aR.setPosition(0.92);
+                robot.aR.setPosition(0.87);
                 clawPos = 2;
                 loopOver = false;
             }
 
             //intake
             if(clawPos == 2 && loopOver) {
-
-                robot.aL.setPosition(0.685);
-                robot.aR.setPosition(0.285);
+                grabbed = false;
+                timer1.reset();
+                timer1Bool =true;
                 clawPos = 0;
                 loopOver = false;
 
@@ -160,6 +176,13 @@ public class skyTeleOp extends OpMode {
         }
 
         loopOver = true;
+
+
+        if(timer1Bool && timer1.seconds() > 0.3){
+            robot.aL.setPosition(0.67);
+            robot.aR.setPosition(0.3);
+            timer1Bool = false;
+        }
 
         if(g2y.onPress()){
             grabbed = !grabbed;
@@ -181,11 +204,11 @@ public class skyTeleOp extends OpMode {
             fgrabbersUp = !fgrabbersUp;
         }
         if(fgrabbersUp){
-            robot.fgl.setPosition(0.6);
-            robot.fgr.setPosition(0.4);
+            robot.fgl.setPosition(0.93);
+            robot.fgr.setPosition(0.93);
         } else{
-            robot.fgl.setPosition(0.3);
-            robot.fgr.setPosition(0.62);
+            robot.fgl.setPosition(0);
+            robot.fgr.setPosition(0);
         }
         //endregion
 
@@ -196,7 +219,10 @@ public class skyTeleOp extends OpMode {
         rx*=3;
         rx/=4;
 
-
+        if(gamepad1.left_trigger > 0.1){
+            rx *= 4;
+            rx /= 3;
+        }
 
         if(gamepad1.right_trigger > 0.1) {
             ly /= 2.5;

@@ -142,10 +142,7 @@ public class skyAuto extends LinearOpMode {
         double brPower = movementYPower + movementXPower - movementTurn;
         double blPower = movementYPower - movementXPower + movementTurn;
 
-        flPower = Range.clip(flPower,-1,1);
-        frPower = Range.clip(frPower,-1,1);
-        brPower = Range.clip(brPower,-1,1);
-        blPower = Range.clip(blPower,-1,1);
+
 
         max = flPower;
         if(frPower > max){
@@ -166,6 +163,10 @@ public class skyAuto extends LinearOpMode {
             blPower /= max;
         }
 
+        flPower = Range.clip(flPower,-1,1);
+        frPower = Range.clip(frPower,-1,1);
+        brPower = Range.clip(brPower,-1,1);
+        blPower = Range.clip(blPower,-1,1);
 
         if(currEndPointIsStopPoint && distToEndPoint < currFollowRadius){
             //region redo loop
@@ -192,6 +193,8 @@ public class skyAuto extends LinearOpMode {
             brPower = movementYPower + movementXPower - movementTurn;
             blPower = movementYPower - movementXPower + movementTurn;
 
+
+
             max = flPower;
             if(frPower > max){
                 max = frPower;
@@ -209,6 +212,12 @@ public class skyAuto extends LinearOpMode {
                 brPower /= max;
                 blPower /= max;
             }
+
+            flPower = Range.clip(flPower,-1,1);
+            frPower = Range.clip(frPower,-1,1);
+            brPower = Range.clip(brPower,-1,1);
+            blPower = Range.clip(blPower,-1,1);
+
             double changeCoeff = 10/distToEndPoint;
 
             if(changeCoeff > 3){
@@ -361,8 +370,8 @@ public class skyAuto extends LinearOpMode {
     }
 
     public void depositPos(){
-        robot.aL.setPosition(0.1);
-        robot.aR.setPosition(0.92);
+        robot.aL.setPosition(0.2);
+        robot.aR.setPosition(0.82);
     }
 
     public void intakePos(){
@@ -380,4 +389,33 @@ public class skyAuto extends LinearOpMode {
         robot.gs.setPosition(0.88);
     }
 
+    public void fgrabbersUp(){
+        robot.fgl.setPosition(0.93);
+        robot.fgr.setPosition(0.93);
+    }
+
+    public void fgrabbersDown(){
+        robot.fgl.setPosition(0);
+        robot.fgr.setPosition(0);
+    }
+
+    public void fgrabbersMiddle(){
+        robot.fgl.setPosition(0.7);
+        robot.fgr.setPosition(0.7);
+    }
+
+    public void intake(){
+        robot.iL.setPower(1);
+        robot.iR.setPower(-1);
+    }
+
+    public void extake(){
+        robot.iL.setPower(-1);
+        robot.iR.setPower(1);
+    }
+
+    public void stopIntake(){
+        robot.iL.setPower(0);
+        robot.iR.setPower(0);
+    }
 }
