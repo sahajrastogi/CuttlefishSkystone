@@ -131,7 +131,7 @@ public class skyAuto extends LinearOpMode {
 
         double relativeTurnAngle = initialPos.theta - targetPos.theta;
 
-        double movementTurn = Range.clip(relativeTurnAngle/Math.toRadians(60),-1,1)*turnSpeed;
+        double movementTurn = Range.clip(relativeTurnAngle/Math.toRadians(90),-1,1)*turnSpeed;
 
         if(distToTarget < 2){
             movementTurn = 0;
@@ -365,23 +365,23 @@ public class skyAuto extends LinearOpMode {
     }
 
     public void grabPos(){
-        robot.aL.setPosition(0.8);
-        robot.aR.setPosition(0.17);
+        robot.aL.setPosition(0.75);
+        robot.aR.setPosition(0.22);
     }
 
     public void depositPos(){
-        robot.aL.setPosition(0.2);
-        robot.aR.setPosition(0.82);
+        robot.aL.setPosition(0.1);
+        robot.aR.setPosition(0.87 );
     }
 
     public void intakePos(){
-        robot.aL.setPosition(0.67);
-        robot.aR.setPosition(0.3);
+        robot.aL.setPosition(0.61);
+        robot.aR.setPosition(0.36);
     }
 
     public void grab(){
-        robot.gf.setPosition(0.7);
-        robot.gs.setPosition(0.51);
+        robot.gf.setPosition(0.75);
+        robot.gs.setPosition(0.5);
     }
 
     public void release(){
@@ -391,7 +391,7 @@ public class skyAuto extends LinearOpMode {
 
     public void fgrabbersUp(){
         robot.fgl.setPosition(0.93);
-        robot.fgr.setPosition(0.93);
+        robot.fgr.setPosition(0.87);
     }
 
     public void fgrabbersDown(){
@@ -400,8 +400,8 @@ public class skyAuto extends LinearOpMode {
     }
 
     public void fgrabbersMiddle(){
-        robot.fgl.setPosition(0.7);
-        robot.fgr.setPosition(0.7);
+        robot.fgl.setPosition(0.5);
+        robot.fgr.setPosition(0.3);
     }
 
     public void intake(){

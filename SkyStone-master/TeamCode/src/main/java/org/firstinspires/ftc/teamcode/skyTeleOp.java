@@ -25,6 +25,9 @@ public class skyTeleOp extends OpMode {
     public boolean loopOver = true;
     public boolean grabbed = false;
     public boolean capstoneHeldUp = true;
+    public int tickCounter = 0;
+    public boolean addslides = false;
+    public int count = 0;
 
     ButtonOp dpUp = new ButtonOp();
     ButtonOp dpDown = new ButtonOp();
@@ -33,6 +36,9 @@ public class skyTeleOp extends OpMode {
     ButtonOp g2a = new ButtonOp();
     ButtonOp g1x = new ButtonOp();
     ButtonOp g1lt = new ButtonOp();
+    ButtonOp g1dpl = new ButtonOp();
+    ButtonOp g1dpr = new ButtonOp();
+    ButtonOp slideThing = new ButtonOp();
 
     public ElapsedTime timer1 = new ElapsedTime();
     public boolean timer1Bool = false;
@@ -58,8 +64,18 @@ public class skyTeleOp extends OpMode {
         g2y.update(gamepad2.y);
         g2a.update(gamepad2.a);
         g1x.update(gamepad1.x);
+        g1dpl.update(gamepad1.dpad_left);
+        g1dpr.update(gamepad1.dpad_right);
         g1lt.update(gamepad1.left_trigger > 0.1);
+        slideThing.update(addslides);
         //endregion
+
+        if(g1dpl.onPress()){
+            tickCounter ++;
+        }
+        if(g1dpr.onPress()){
+            tickCounter --;
+        }
 
         //region intake
         robot.iL.setPower(gamepad2.right_stick_y);
@@ -119,13 +135,13 @@ public class skyTeleOp extends OpMode {
             robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
 
-        if(dpUp.isPressed()){
+        if(dpUp.isPressed() || addslides){
             robot.lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             robot.lift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
             if(gamepad2.right_trigger > 0.1){
-                robot.lift.setPower(-0.5);
-                robot.lift2.setPower(-0.5);
+                robot.lift.setPower(-0.7);
+                robot.lift2.setPower(-0.7);
             } else {
                 robot.lift.setPower(-1);
                 robot.lift2.setPower(-1);
@@ -143,6 +159,18 @@ public class skyTeleOp extends OpMode {
                 robot.lift2.setPower(1);
             }
         }
+
+
+        if(slideThing.onRelease()){
+            lift2Pos = robot.lift2.getCurrentPosition();
+            robot.lift2.setTargetPosition(lift2Pos);
+            robot.lift2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            liftPos = robot.lift.getCurrentPosition();
+            robot.lift.setTargetPosition(liftPos);
+            robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+
         //endregion
 
         //region claw
@@ -150,16 +178,16 @@ public class skyTeleOp extends OpMode {
         if(g2x.onPress() || g1lt.onPress()) {
             //grab
             if (clawPos == 0 && loopOver) {
-                robot.aL.setPosition(0.8);
-                robot.aR.setPosition(0.17);
+                robot.aL.setPosition(0.73);
+                robot.aR.setPosition(0.24);
                 grabbed = true;
                 clawPos = 1;
                 loopOver = false;
             }
             //deposit
             if(clawPos == 1 && loopOver) {
-                robot.aL.setPosition(0.1);
-                robot.aR.setPosition(0.87);
+                robot.aL.setPosition(0.237 + tickCounter * 0.01);
+                robot.aR.setPosition(0.733 - tickCounter * 0.01);
                 clawPos = 2;
                 loopOver = false;
             }
@@ -168,19 +196,28 @@ public class skyTeleOp extends OpMode {
             if(clawPos == 2 && loopOver) {
                 grabbed = false;
                 timer1.reset();
-                timer1Bool =true;
+                timer1Bool = true;
                 clawPos = 0;
                 loopOver = false;
-
+                if(count > 0) {
+                    addslides = true;
+                }
+                count++;
             }
         }
 
         loopOver = true;
 
+        if(gamepad2.left_bumper){
+            robot.aL.setPosition(0.05);
+            robot.aR.setPosition(0.92);
+        }
 
-        if(timer1Bool && timer1.seconds() > 0.3){
-            robot.aL.setPosition(0.67);
-            robot.aR.setPosition(0.3);
+        if(timer1Bool && timer1.seconds() > 0.23){
+            robot.aL.setPosition(0.61);
+            robot.aR.setPosition(0.36);
+            addslides = false;
+
             timer1Bool = false;
         }
 
@@ -189,11 +226,11 @@ public class skyTeleOp extends OpMode {
         }
 
         if(grabbed){
-            robot.gf.setPosition(0.7);
-            robot.gs.setPosition(0.51);
+            robot.gf.setPosition(0.75);
+            robot.gs.setPosition(0.5);
         } else {
             robot.gf.setPosition(0.27);
-            robot.gs.setPosition(0.92);
+            robot.gs.setPosition(0.87);
         }
 
             //endregion
@@ -233,6 +270,7 @@ public class skyTeleOp extends OpMode {
     //endregion
 
         //region telemetry
+        telemetry.addData("tickCounter",tickCounter);
         telemetry.addData("clawPos",clawPos);
         telemetry.addData("lpos",robot.aL.getPosition());
         telemetry.addData("rpos",robot.aR.getPosition());

@@ -29,14 +29,14 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 class SamplePipelineBlue extends OpenCvPipeline
 {
-    public int x1 = 225;
-    public int y1 = 480;
-    public int x2 = 410;
-    public int y2 = 585;
-    public int x3 = 455;
-    public int y3 = 485;
-    public int x4 = 655;
-    public int y4 = 575;
+    public int x1 = 345;
+    public int y1 = 55;
+    public int x2 = 490;
+    public int y2 = 145;
+    public int x3 = 575;
+    public int y3 = 50;
+    public int x4 = 755;
+    public int y4 = 120 ;
     public String verdictL = "wait";
     public String verdictR = "wait";
 
